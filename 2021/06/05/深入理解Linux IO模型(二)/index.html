@@ -79,22 +79,23 @@
 
 
 
-<meta name="description" content="[TOC] 接着前文《深入理解Linux IO模型(一)》，本文深入分析IO多路复用模型中的epoll。   本文为了描述方便，统一用读操作讲述，写操作同理。 本文为了撰写方便，统一将I&#x2F;O写成了IO。 欢迎指正文中的错误。   实现原理epoll的APIepoll的API有三个。创建epoll：epoll_create控制epoll：epoll_ctl等待epoll：epoll_wait 创建e">
+<meta name="description" content="[TOC] 接着前文《深入理解Linux IO模型(一)》，本文深入分析IO多路复用模型中的epoll。   本文为了描述方便，统一用读操作讲述，写操作同理。 本文为了撰写方便，统一将I&#x2F;O写成了IO。 欢迎指正文中的错误。   为何使用epollNginx在几十万并发连接下，是如何做到高效利用服务器资源的？答案是epoll。 设想一个场景：有100万用户同时与一个网络应用进程保持着TCP连接，而">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入理解Linux IO模型(二)">
 <meta property="og:url" content="https://pearlzju.github.io/2021/06/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%BA%8C)/index.html">
 <meta property="og:site_name" content="Pearl 的个人小站">
-<meta property="og:description" content="[TOC] 接着前文《深入理解Linux IO模型(一)》，本文深入分析IO多路复用模型中的epoll。   本文为了描述方便，统一用读操作讲述，写操作同理。 本文为了撰写方便，统一将I&#x2F;O写成了IO。 欢迎指正文中的错误。   实现原理epoll的APIepoll的API有三个。创建epoll：epoll_create控制epoll：epoll_ctl等待epoll：epoll_wait 创建e">
+<meta property="og:description" content="[TOC] 接着前文《深入理解Linux IO模型(一)》，本文深入分析IO多路复用模型中的epoll。   本文为了描述方便，统一用读操作讲述，写操作同理。 本文为了撰写方便，统一将I&#x2F;O写成了IO。 欢迎指正文中的错误。   为何使用epollNginx在几十万并发连接下，是如何做到高效利用服务器资源的？答案是epoll。 设想一个场景：有100万用户同时与一个网络应用进程保持着TCP连接，而">
+<meta property="og:image" content="https://pearlzju.github.io/images/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B/29.png">
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B/26.png">
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B/27.png">
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B/28.png">
 <meta property="article:published_time" content="2021-06-05T15:57:11.013Z">
-<meta property="article:modified_time" content="2021-06-11T10:24:29.867Z">
+<meta property="article:modified_time" content="2021-06-12T09:07:52.055Z">
 <meta property="article:author" content="Pearl">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="Linux I&#x2F;O">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pearlzju.github.io/images/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B/26.png">
+<meta name="twitter:image" content="https://pearlzju.github.io/images/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B/29.png">
 
 
 
@@ -401,7 +402,40 @@
 <li>欢迎指正文中的错误。</li>
 </ol>
 </blockquote>
-<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><h3 id="epoll的API"><a href="#epoll的API" class="headerlink" title="epoll的API"></a>epoll的API</h3><p>epoll的API有三个。<br>创建epoll：epoll_create<br>控制epoll：epoll_ctl<br>等待epoll：epoll_wait</p>
+<h3 id="为何使用epoll"><a href="#为何使用epoll" class="headerlink" title="为何使用epoll"></a>为何使用epoll</h3><p>Nginx在几十万并发连接下，是如何做到高效利用服务器资源的？答案是epoll。</p>
+<p>设想一个场景：有100万用户同时与一个网络应用进程保持着TCP连接，而每一时刻只有几十或几百个TCP连接是活跃的（网络应用进程接收到TCP报文），那么在这个时刻，进程只需要处理这100万个连接中的这些活跃的连接即可。那么，内核和应用进程如何协同，才能高效地处理这种情况呢？</p>
+<h4 id="select的缺陷"><a href="#select的缺陷" class="headerlink" title="select的缺陷"></a>select的缺陷</h4><p>应用进程是否在每次调用系统调用，询问内核有事件发生的TCP连接时，把这100万个连接告诉内核，由内核找出其中有事件发生的TCP连接呢？<br>这正是select的做法。</p>
+<p>select有明显的缺陷，因为这100万个TCP连接中，大部分是没有事件发生的。如果应用程序每次收集事件时，都把这100万个socket fd传给内核。有以下问题：</p>
+<ol>
+<li>导致用户空间到内核空间的大量复制。</li>
+<li>内核需要遍历所有的socket fd，判断哪些有事件到来。</li>
+<li>应用进程仍需要遍历所有的socket fd，来判断哪些socket fd可读。</li>
+</ol>
+<p>所以select限制了同时监听的socket fd数量，最多只能同时处理1024个并发连接。</p>
+<h4 id="epoll的提出"><a href="#epoll的提出" class="headerlink" title="epoll的提出"></a>epoll的提出</h4><p>epoll在内核中申请了一片内存空间。</p>
+<p>epoll的做法是，把应用程序的一个select调用分成三部分：</p>
+<ol>
+<li>调用epoll_create创建一个epoll对象</li>
+<li>调用epoll_ctl向epoll对象添加这100万个socket fd</li>
+<li>调用epoll_wait等待收集发生事件的连接</li>
+</ol>
+<p>这样，只要在应用进程启动时，建立1个epoll对象(下文用epfd表示)，并在TCP连接到来和断开的时候，对epfd添加和删除事件就可以了（也可以修改）。<br>应用进程调用epoll_wait时，不需要向内核空间传递这100万个连接，内核也不需要遍历全部的连接。所以epoll_wait很高效。</p>
+<h3 id="epoll的原理"><a href="#epoll的原理" class="headerlink" title="epoll的原理"></a>epoll的原理</h3><p>epoll的数据结构如图所示。</p>
+<img width="500" src="/images/深入理解Linux IO模型/29.png">
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 只列出了成员rbr、rdllist，它们和epoll的使用密切相关</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">eventpoll</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">// 红黑树的根节点，这棵树中存储着所有添加到epoll中的事件，即这个epoll监控的事件</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rb_root</span> <span class="title">rbr</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 双向链表rdllist保存着要通过epoll_wait返回给应用程序的满足条件的事件</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">rdllist</span>;</span></span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epitem</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">// 红黑树节点</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> <span class="title">rbn</span>;</span></span><br><span class="line">	<span class="comment">// 双向链表节点</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">rdllink</span>;</span></span><br><span class="line">	<span class="comment">// 事件句柄等信息</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">epoll_filefd</span> <span class="title">ffd</span>;</span></span><br><span class="line">	<span class="comment">// 指向其所属的eventpoll对象</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">eventpoll</span> *<span class="title">ep</span>;</span></span><br><span class="line">	<span class="comment">// 期待的事件类型</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>当某个应用进程调用epoll_create时，内核会在内核空间创建一个独立的eventpoll结构体对象，用于存储使用epoll_ctl向epoll对象添加的事件。</li>
+<li>这些事件都会添加到rbr红黑树中（重复添加的事件可以通过红黑树高效地识别出来）。从红黑树中查找事件非常快。</li>
+<li>所有添加到epoll对象中的事件都会与设备驱动程序（如网卡驱动程序）建立回调关系，当相应的事件发生时，会调用回调函数。这个回调函数在内核叫<code>ep_poll_callback</code>，回调函数会把这样的事件写入rdllist双向链表中。</li>
+<li>在epoll中，为每个事件都建立一个epitem结构体对象。</li>
+<li>当应用程序调用epoll_wait检查是否有事件发生的连接时，内核只是检查eventpoll对象的rdllist双向链表是否有epitem元素而已。如果rdllist链表不为空，内核把这里的事件复制到用户空间，同时返回对应的事件数量。所以epoll_wait效率很高。</li>
+</ol>
+<p>以上，所以epoll可以处理百万级别的并发连接。</p>
+<h3 id="epoll的API"><a href="#epoll的API" class="headerlink" title="epoll的API"></a>epoll的API</h3><p>epoll提供给应用程序的API有三个。<br>创建epoll：epoll_create<br>控制epoll：epoll_ctl<br>等待epoll：epoll_wait</p>
 <h4 id="创建epoll"><a href="#创建epoll" class="headerlink" title="创建epoll"></a>创建epoll</h4><p>创建epoll，指的是在内核空间创建一颗红黑树（平衡二叉树）的根节点root。它返回epoll fd（下面简称epfd）。这个root根节点与epfd相对应。如图所示。</p>
 <img width="200" src="/images/深入理解Linux IO模型/26.png">
 
@@ -702,7 +736,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现原理"><span class="nav-number">1.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll的API"><span class="nav-number">2.</span> <span class="nav-text">epoll的API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建epoll"><span class="nav-number">2.1.</span> <span class="nav-text">创建epoll</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制epoll"><span class="nav-number">2.2.</span> <span class="nav-text">控制epoll</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#等待epoll"><span class="nav-number">2.3.</span> <span class="nav-text">等待epoll</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用epoll-API的编程架构"><span class="nav-number">3.</span> <span class="nav-text">使用epoll API的编程架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#触发方式"><span class="nav-number">4.</span> <span class="nav-text">触发方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#水平触发-Level-Triggered-LT"><span class="nav-number">4.1.</span> <span class="nav-text">水平触发(Level Triggered, LT)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#边缘触发-Edge-Triggered-ET"><span class="nav-number">4.2.</span> <span class="nav-text">边缘触发(Edge Triggered, ET)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#两者对比"><span class="nav-number">4.3.</span> <span class="nav-text">两者对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为何使用epoll"><span class="nav-number">1.</span> <span class="nav-text">为何使用epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#select的缺陷"><span class="nav-number">1.1.</span> <span class="nav-text">select的缺陷</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#epoll的提出"><span class="nav-number">1.2.</span> <span class="nav-text">epoll的提出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll的原理"><span class="nav-number">2.</span> <span class="nav-text">epoll的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll的API"><span class="nav-number">3.</span> <span class="nav-text">epoll的API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建epoll"><span class="nav-number">3.1.</span> <span class="nav-text">创建epoll</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制epoll"><span class="nav-number">3.2.</span> <span class="nav-text">控制epoll</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#等待epoll"><span class="nav-number">3.3.</span> <span class="nav-text">等待epoll</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用epoll-API的编程架构"><span class="nav-number">4.</span> <span class="nav-text">使用epoll API的编程架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#触发方式"><span class="nav-number">5.</span> <span class="nav-text">触发方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#水平触发-Level-Triggered-LT"><span class="nav-number">5.1.</span> <span class="nav-text">水平触发(Level Triggered, LT)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#边缘触发-Edge-Triggered-ET"><span class="nav-number">5.2.</span> <span class="nav-text">边缘触发(Edge Triggered, ET)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#两者对比"><span class="nav-number">5.3.</span> <span class="nav-text">两者对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             
 
           </div>
