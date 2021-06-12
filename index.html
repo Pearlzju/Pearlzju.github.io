@@ -270,7 +270,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://pearlzju.github.io/2021/06/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/">
+    <link itemprop="mainEntityOfPage" href="https://pearlzju.github.io/2021/06/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Pearl">
@@ -289,7 +289,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2021/06/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" itemprop="url">深入理解Linux IO模型(一)</a></h1>
+                <a class="post-title-link" href="/2021/06/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" itemprop="url">深入理解Linux IO模型(一)</a></h1>
         
 
         <div class="post-meta">
@@ -301,8 +301,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-05T23:57:11+08:00">
-                2021-06-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-12T10:43:55+08:00">
+                2021-06-12
               </time>
             
 
@@ -342,8 +342,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2021/06/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2021/06/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" itemprop="commentCount"></span>
+                <a href="/2021/06/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/06/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -351,7 +351,7 @@
 
           
           
-             <span id="/2021/06/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" class="leancloud_visitors" data-flag-title="深入理解Linux IO模型(一)">
+             <span id="/2021/06/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" class="leancloud_visitors" data-flag-title="深入理解Linux IO模型(一)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -670,12 +670,12 @@
 </ol>
 <p>epoll的优点是：</p>
 <ol>
-<li>可以同时监听大量的socket fd。能够处理大量的链接请求(系统可以打开的文件数目) 。<blockquote>
-<p><code>cat /proc/sys/fs/file-max</code> 得到当前操作系统可以打开的最大文件描述符个数。</p>
-</blockquote>
-</li>
+<li>可以同时监听大量的socket fd。能够处理大量的链接请求(系统可以打开的文件数目) 。</li>
 <li>应用进程被唤醒后，只需要遍历可读的fd。</li>
 </ol>
+<blockquote>
+<p><code>cat /proc/sys/fs/file-max</code> 得到当前操作系统可以打开的最大文件描述符个数。</p>
+</blockquote>
 <h3 id="epoll详解"><a href="#epoll详解" class="headerlink" title="epoll详解"></a>epoll详解</h3><p>关于epoll更多细节，在《深入理解Linux IO模型(二)》讲述。</p>
 <h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p>UNIX环境高级编程（第3版）<a href="https://book.douban.com/subject/25900403/" target="_blank" rel="noopener">https://book.douban.com/subject/25900403/</a><br><a href="http://www.cse.iitm.ac.in/~chester/courses/15o_os/slides/5_Interrupts.pdf" target="_blank" rel="noopener">http://www.cse.iitm.ac.in/~chester/courses/15o_os/slides/5_Interrupts.pdf</a><br><a href="https://blog.packagecloud.io/eng/2016/10/11/monitoring-tuning-linux-networking-stack-receiving-data-illustrated/" target="_blank" rel="noopener">https://blog.packagecloud.io/eng/2016/10/11/monitoring-tuning-linux-networking-stack-receiving-data-illustrated/</a><br><a href="https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/" target="_blank" rel="noopener">https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/</a><br><a href="https://mp.weixin.qq.com/s/kWDKpgmcOQFjoBAK3LyPTg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/kWDKpgmcOQFjoBAK3LyPTg</a><br><a href="https://juejin.cn/post/6892687008552976398#heading-26" target="_blank" rel="noopener">https://juejin.cn/post/6892687008552976398#heading-26</a></p>
 
@@ -849,7 +849,49 @@
 <li>欢迎指正文中的错误。</li>
 </ol>
 </blockquote>
-<h3 id="epoll-API"><a href="#epoll-API" class="headerlink" title="epoll API"></a>epoll API</h3><h3 id="实现机制"><a href="#实现机制" class="headerlink" title="实现机制"></a>实现机制</h3><h3 id="触发方式"><a href="#触发方式" class="headerlink" title="触发方式"></a>触发方式</h3><h4 id="水平触发"><a href="#水平触发" class="headerlink" title="水平触发"></a>水平触发</h4><h4 id="边缘触发"><a href="#边缘触发" class="headerlink" title="边缘触发"></a>边缘触发</h4><h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p>深入理解Nginx（第2版）<a href="https://book.douban.com/subject/26745255/" target="_blank" rel="noopener">https://book.douban.com/subject/26745255/</a><br><a href="https://mp.weixin.qq.com/s/kWDKpgmcOQFjoBAK3LyPTg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/kWDKpgmcOQFjoBAK3LyPTg</a></p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><h3 id="epoll的API"><a href="#epoll的API" class="headerlink" title="epoll的API"></a>epoll的API</h3><p>epoll的API有三个。<br>创建epoll：epoll_create<br>控制epoll：epoll_ctl<br>等待epoll：epoll_wait</p>
+<h4 id="创建epoll"><a href="#创建epoll" class="headerlink" title="创建epoll"></a>创建epoll</h4><p>创建epoll，指的是在内核空间创建一颗红黑树（平衡二叉树）的根节点root。它返回epoll fd（下面简称epfd）。这个root根节点与epfd相对应。如图所示。</p>
+<img width="200" src="/images/深入理解Linux IO模型/26.png">
+
+<p>API如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * @param size 告诉内核监听的数目 </span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * @returns 返回一个epoll句柄（即一个文件描述符） </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用方法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> epfd = epoll_create(<span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="控制epoll"><a href="#控制epoll" class="headerlink" title="控制epoll"></a>控制epoll</h4><p>控制epoll，指的是以下三种操作:</p>
+<ul>
+<li>注册新的fd到epfd</li>
+<li>修改已经注册的fd的监听事件</li>
+<li>删除一个注册到epfd的fd</li>
+</ul>
+<p>API如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* @param epfd 用epoll_create所创建的epoll句柄</span></span><br><span class="line"><span class="comment">* @param op 表示对epoll监控描述符控制的动作</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* EPOLL_CTL_ADD(注册新的fd到epfd)</span></span><br><span class="line"><span class="comment">* EPOLL_CTL_MOD(修改已经注册的fd的监听事件)</span></span><br><span class="line"><span class="comment">* EPOLL_CTL_DEL(epfd删除一个fd)</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* @param fd 需要监听的文件描述符</span></span><br><span class="line"><span class="comment">* @param event 告诉内核需要监听的事件</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* @returns 成功返回0，失败返回-1, errno查看错误信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd,</span></span></span><br><span class="line"><span class="function"><span class="params">struct epoll_event *event)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> &#123;</span></span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment"> * events : &#123;EPOLLIN, EPOLLOUT, EPOLLPRI,</span></span><br><span class="line"><span class="comment">             EPOLLHUP, EPOLLET, EPOLLONESHOT&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">  <span class="keyword">__uint32_t</span> events; <span class="comment">// epoll 事件</span></span><br><span class="line">  <span class="keyword">epoll_data_t</span> data; <span class="comment">// 用户传递的数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> epoll_data &#123;</span><br><span class="line">  <span class="keyword">void</span> *ptr;</span><br><span class="line">  <span class="keyword">int</span> fd; <span class="comment">// 监听的事件fd</span></span><br><span class="line">  <span class="keyword">uint32_t</span> u32;</span><br><span class="line">  <span class="keyword">uint64_t</span> u64;</span><br><span class="line">&#125; <span class="keyword">epoll_data_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用方法:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">new_event</span>;</span></span><br><span class="line"></span><br><span class="line">new_event.events = EPOLLIN | EPOLLOUT;</span><br><span class="line">new_event.data.fd = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">epoll_ctl(epfd, EPOLL_CTL_ADD, <span class="number">5</span>, &amp;new_event);</span><br></pre></td></tr></table></figure>
+
+<p>在用户空间创建一个IO事件，绑定到某个fd上，然后把该事件的fd添加到内核中的epoll红黑树中。当fd可读或可写时，触发的是epoll_event。如图所示。</p>
+<img width="500" src="/images/深入理解Linux IO模型/27.png">
+
+<h4 id="等待epoll"><a href="#等待epoll" class="headerlink" title="等待epoll"></a>等待epoll</h4><p>API如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* @param epfd 用epoll_create所创建的epoll句柄</span></span><br><span class="line"><span class="comment">* @param event 从内核得到的事件集合</span></span><br><span class="line"><span class="comment">* @param maxevents 告知内核这个events有多大,</span></span><br><span class="line"><span class="comment">* 注意: 值不能大于创建epoll_create()时的size.</span></span><br><span class="line"><span class="comment">* @param timeout 超时时间</span></span><br><span class="line"><span class="comment">* -1: 永久阻塞</span></span><br><span class="line"><span class="comment">* 0: 立即返回，非阻塞</span></span><br><span class="line"><span class="comment">* &gt;0: 指定微秒</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* @returns 成功: 有多少文件描述符就绪,时间到时返回0</span></span><br><span class="line"><span class="comment">* 失败: -1, errno 查看错误</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event *event,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用方法:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">my_event</span>[1000];</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> event_cnt = epoll_wait(epfd, my_event, <span class="number">1000</span>, <span class="number">-1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如图所示。应用程序调用epoll_wait后，进入阻塞状态。当内核检测到new_event或event1绑定的fd可读了，内核把就绪的event事件拷贝到用户空间的my_event数组。应用程序只需要遍历my_event，取出对应的事件和fd，知道是可读了，然后堵塞调用recv(fd)读数据。</p>
+<img width="500" src="/images/深入理解Linux IO模型/28.png">
+
+<h3 id="使用epoll-API的编程架构"><a href="#使用epoll-API的编程架构" class="headerlink" title="使用epoll API的编程架构"></a>使用epoll API的编程架构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建epoll fd，最多可接收1000个事件</span></span><br><span class="line"><span class="keyword">int</span> epfd = epoll_crete(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将listen_fd添加进epoll中</span></span><br><span class="line">epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &amp;listen_event);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">  <span class="comment">// 阻塞等待epoll中的事件fd触发</span></span><br><span class="line">  <span class="keyword">int</span> active_cnt = epoll_wait(epfd, events, <span class="number">1000</span>, <span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span> ; i &lt; active_cnt; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (evnets[i].data.fd == listen_fd) &#123;</span><br><span class="line">      <span class="comment">// 表示新的客户端连接请求到来</span></span><br><span class="line">      <span class="comment">// 调用accept进行三次握手，创建client_fd</span></span><br><span class="line">      <span class="comment">// 并将client_fd加进epoll中</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (events[i].events &amp; EPOLLIN) &#123;</span><br><span class="line">      <span class="comment">// 表示不是新的客户端连接，可读客户端发来的数据</span></span><br><span class="line">      <span class="comment">// client_fd就绪可读，对此fd进行读操作</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (events[i].events &amp; EPOLLOUT) &#123;</span><br><span class="line">      <span class="comment">// 表示不是新的客户端连接，可把数据回写客户端</span></span><br><span class="line">      <span class="comment">// client_fd就绪可写，对此fd进行写操作</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="触发方式"><a href="#触发方式" class="headerlink" title="触发方式"></a>触发方式</h3><p>epoll有两种工作模式：水平触发和边缘触发。默认情况下，epoll采用水平触发模式。</p>
+<h4 id="水平触发-Level-Triggered-LT"><a href="#水平触发-Level-Triggered-LT" class="headerlink" title="水平触发(Level Triggered, LT)"></a>水平触发(Level Triggered, LT)</h4><p>如果应用程序阻塞在epoll_wait，当内核有事件发生的时候，内核把已经触发的事件队列复制到用户空间。如果应用程序本次没有完成读操作，下一次epoll_wait会再次返回该事件。<br>即只要一个事件对应的套接字缓冲区还有数据，就总能从epoll_wait中获取这个事件。</p>
+<p>优点：事件不会丢掉，除非应用程序处理完毕。保证事件的完整性。<br>缺点：如果应用程序不处理这个事件，就导致内核每次都把该事件从内核空间拷贝到用户空间，系统调用消耗性能。</p>
+<h4 id="边缘触发-Edge-Triggered-ET"><a href="#边缘触发-Edge-Triggered-ET" class="headerlink" title="边缘触发(Edge Triggered, ET)"></a>边缘触发(Edge Triggered, ET)</h4><p>如果应用程序阻塞在epoll_wait，当内核有事件发生的时候，内核把已经触发的事件队列复制到用户空间。如果应用程序本次没有完成读操作，下一次epoll_wait不再会返回该事件。<br>即如果这次没有把这个事件对应的套接字缓冲区处理完，在这个套接字没有新的事件再次到来时，无法再次从epoll_wait调用中获取到这个事件。</p>
+<p>优点：内核不会重复把该事件从内核空间拷贝到用户空间。保证性能。<br>缺点：如果应用程序没有处理完毕，事件会被丢掉。导致事件不完整。</p>
+<h4 id="两者对比"><a href="#两者对比" class="headerlink" title="两者对比"></a>两者对比</h4><p>在水平触发模式下，开发基于epoll的应用要简单一些，不太容易出错。而在边缘触发模式下，当事件发生时，如果没有彻底地将缓冲区数据处理完，则会导致缓冲区中的用户请求得不到响应。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p>深入理解Nginx（第2版）<a href="https://book.douban.com/subject/26745255/" target="_blank" rel="noopener">https://book.douban.com/subject/26745255/</a><br><a href="https://mp.weixin.qq.com/s/kWDKpgmcOQFjoBAK3LyPTg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/kWDKpgmcOQFjoBAK3LyPTg</a></p>
 
           
         
