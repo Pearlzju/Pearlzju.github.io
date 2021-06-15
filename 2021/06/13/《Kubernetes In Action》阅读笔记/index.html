@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Kubernetes," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC]  本文是把《Kubernetes In Action》读薄的摘抄、转述和理解，仅供参考。系统学习请阅读原书。k8s中的命令繁多，熟练使用它们和理解k8s设计思想同等重要，每章最后总结了该章涉及的命令。    阅读之前2019~2020年期间，在工作上使用过Istio来治理微服务，Istio与Kubernetes(k8s)紧密集合。我们的业务是一个云计算Iass和Paas平台，我们把计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Kubernetes In Action》阅读笔记">
+<meta property="og:url" content="https://pearlzju.github.io/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Pearl 的个人小站">
+<meta property="og:description" content="[TOC]  本文是把《Kubernetes In Action》读薄的摘抄、转述和理解，仅供参考。系统学习请阅读原书。k8s中的命令繁多，熟练使用它们和理解k8s设计思想同等重要，每章最后总结了该章涉及的命令。    阅读之前2019~2020年期间，在工作上使用过Istio来治理微服务，Istio与Kubernetes(k8s)紧密集合。我们的业务是一个云计算Iass和Paas平台，我们把计算">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/0.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/1.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/2.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/3.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/4.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/5.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/6.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/7.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/8.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/9.png">
+<meta property="og:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/10.png">
+<meta property="article:published_time" content="2021-06-13T02:17:28.829Z">
+<meta property="article:modified_time" content="2021-06-15T10:44:13.456Z">
+<meta property="article:author" content="Pearl">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pearlzju.github.io/images/Kubernetes%20In%20Action%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/0.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pearlzju.github.io/2021/06/13/《Kubernetes In Action》阅读笔记/"/>
+
+
+
+
+
+  <title>《Kubernetes In Action》阅读笔记 | Pearl 的个人小站</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e99d362e55bda406e16937db2b48aebc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Pearl 的个人小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">终身学习者</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pearlzju.github.io/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Pearl">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/face.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Pearl 的个人小站">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《Kubernetes In Action》阅读笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-13T10:17:28+08:00">
+                2021-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" class="leancloud_visitors" data-flag-title="《Kubernetes In Action》阅读笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<blockquote>
+<p>本文是把《Kubernetes In Action》读薄的摘抄、转述和理解，仅供参考。系统学习请阅读原书。<br>k8s中的命令繁多，熟练使用它们和理解k8s设计思想同等重要，每章最后总结了该章涉及的命令。</p>
+</blockquote>
+<img width="300" src="/images/Kubernetes In Action阅读笔记/0.png">
+
+<h1 id="阅读之前"><a href="#阅读之前" class="headerlink" title="阅读之前"></a>阅读之前</h1><p>2019~2020年期间，在工作上使用过Istio来治理微服务，Istio与Kubernetes(k8s)紧密集合。我们的业务是一个云计算Iass和Paas平台，我们把计算、网络、存储、安全、数据库、负载均衡和监控等模块拆分成微服务，用k8s管理，每个组件以pod的形式独立部署。当时我只是在项目中应用了istio+k8s，没有系统学习过k8s的设计思想。最近因为工作原因，再次接触k8s，于是挑选了《Kubernetes In Action》进行系统学习和温故而知新，这确实是一本不多见的涵盖广阔提纲挈领的好书。</p>
+<p>微服务架构，它从管理上获取对服务的抽象，方便服务的管理和规划服务的边界。但它因为引入了很多新的机制，比如注册中心等，其实对硬件而言是一种牺牲。舍弃一定的性能，换来的是服务的治理、团队协作开发的方便，这就是微服务架构的价值。</p>
+<p>程序的本质从不同角度观察，会有不同的见解，就像光的波粒二象性。我的观点是不浪费硬件是对提升性能最大的帮助。会有听到微服务解决了高并发问题的说法，但微服务和高并发其实没有必然关系。而是因为通常微服务会使用分布式方式部署，硬件资源包括CPU、网络、磁盘等成倍增加，所以分布式对高并发问题有积极作用。</p>
+<p>Istio，它其实不局限于微服务治理范畴，任何服务，只要服务间有访问，需要对服务间的通信进行管理，都可以使用Istio。</p>
+<p>k8s不是一个专为Docker设计的容器编排系统。k8s的核心也不止是编排容器，只不过容器恰好是在不同集群节点上运行应用的最佳方式。k8s可以被看作集群的一个操作系统，提供服务发现、扩容、负载均衡、自恢复、leader选举等功能。</p>
+<h1 id="1-Kubernetes-介绍-1"><a href="#1-Kubernetes-介绍-1" class="headerlink" title="1 Kubernetes 介绍 1"></a>1 Kubernetes 介绍 1</h1><p>微服务架构是替代以单个进程或几个进程运行在服务器上为部署方式的单体应用的一种方式，它将单体应用分解成若干个可独立运行组件。微服务的解耦性，确保它们可以被独立开发、部署、升级、伸缩。<br>如何部署、管理这些微服务，并充分利用宿主机的硬件资源，诞生了k8s。k8s可以理解为是一个数据中心操作系统(DCOS)，他将人员分为开发人员和系统管理员，系统管理员负责处理和硬件、集群相关的事务，开发人员只需要提交自己的应用和描述。k8s会「自动」按照开发人员的描述，把应用启动起来，并暴露定义的端口。</p>
+<blockquote>
+<p>在computer science领域，有一句话”All problems in computer science can be solved by another level of indirection”。k8s抽象了数据中心的硬件基础设置，对外暴露资源池API，开发人员不用关心底层的硬件设施。这种抽象和操作系统也有相似之处。</p>
+</blockquote>
+<h2 id="1-1-Kubernetes-系统的需求-2"><a href="#1-1-Kubernetes-系统的需求-2" class="headerlink" title="1.1 Kubernetes 系统的需求 2"></a>1.1 Kubernetes 系统的需求 2</h2><h3 id="1-1-1-从单体应用到微服务-2"><a href="#1-1-1-从单体应用到微服务-2" class="headerlink" title="1.1.1 从单体应用到微服务 2"></a>1.1.1 从单体应用到微服务 2</h3><p>对于单体应用，为了提升系统负载能力，有两种扩展方式。<br>垂直扩展：增加CPU、内存或其它系统资源。应用程序无需变化，但成本越来越高，无法无限扩展。<br>水平扩展：经常需要应用程序进行改动才可执行，可能会被某个模块无法水平扩展限制。</p>
+<p>单体应用可被拆分成多个可独立部署、以独立进程运行的微服务，微服务之间以约定的API通信。</p>
+<p>对于微服务架构，可以只扩容某些服务，因为扩容粒度细化，可以根据具体情况分配扩容资源。</p>
+<blockquote>
+<p>如果有历史项目是单体应用，不得不水平扩容，而水平扩容受到某些模块的限制。可以把应用拆分成多个微服务，对能扩容的组件水平扩展，对不能扩容的组件垂直扩展。</p>
+</blockquote>
+<p>看似一切很美好，微服务带来的弊端不容忽视。<br>当服务数量激增，如何处理服务间错综复杂的依赖关系，如何把正确的配置应用到每个服务，如何调试代码和定位异常调用，如何解决不同服务对于环境需求的差异，都是需要面对的。</p>
+<h3 id="1-1-2-为应用程序提供一个一致的环境-5"><a href="#1-1-2-为应用程序提供一个一致的环境-5" class="headerlink" title="1.1.2 为应用程序提供一个一致的环境 5"></a>1.1.2 为应用程序提供一个一致的环境 5</h3><p>目标是让服务在开发和生产阶段可以运行在完全一样的环境下，有完全一样的操作系统、库、系统配置、网络环境等。各个服务之间独立互不影响。</p>
+<h3 id="1-1-3-迈向持续交付-：DevOps-和无运维-6"><a href="#1-1-3-迈向持续交付-：DevOps-和无运维-6" class="headerlink" title="1.1.3 迈向持续交付 ：DevOps 和无运维 6"></a>1.1.3 迈向持续交付 ：DevOps 和无运维 6</h3><p>让应用开发者和系统管理员解耦，开发者可以自己参与配置和部署程序，但又无需关注硬件基础设施。而实际上系统管理员在幕后保证底层基础设施正常运转，但他们也无需关注运行的程序本身。<br>这正是k8s实现的功能。它对硬件资源进行抽象，对外暴露成一个平台，用于部署和运行应用程序。</p>
+<h2 id="1-2-介绍容器技术-7"><a href="#1-2-介绍容器技术-7" class="headerlink" title="1.2 介绍容器技术 7"></a>1.2 介绍容器技术 7</h2><p>k8s使用Linux容器技术来实现对应用的隔离。</p>
+<h3 id="1-2-1-什么是容器-7"><a href="#1-2-1-什么是容器-7" class="headerlink" title="1.2.1 什么是容器 7"></a>1.2.1 什么是容器 7</h3><p>虚拟机可以隔离不同的微服务环境是显然的，Linux容器技术也可以。容器和虚拟机相比开销小很多，容器里运行的进程实际上运行在宿主机上，但是和其它进程隔离，开销仅是容器消耗的资源。</p>
+<p>虚拟机和容器中的应用进程对CPU的使用方式不同。每个虚拟机对应的Linux内核不一样，而不同容器对应的Linux内核一样（存在安全隐患）。如图所示。</p>
+<img width="400" src="/images/Kubernetes In Action阅读笔记/1.png">
+
+<p>如果多个进程运行在同一个操作系统上，是怎么利用容器是隔离它们的？有两个机制可用。</p>
+<ol>
+<li>Linux命名空间。可以在某个命名空间运行一个进程，进程只能看到这个命名空间下的资源。当然，会存在多种类型的命名空间，所以一个进程不单单只属于某一个命名空间，而属于每个类型的一个命名空间。</li>
+</ol>
+<p>存在以下类型的命名空间：</p>
+<ul>
+<li>Mount（mnt）</li>
+<li>Process ID（pid）</li>
+<li>Network（net）</li>
+<li>Inter-process communicaion（ipd）</li>
+<li>UTS</li>
+<li>User ID（user）</li>
+</ul>
+<ol start="2">
+<li>内核的cgroups。限制进程能使用的资源量（CPU、内存、网络带宽等）不能超过被分配的量。</li>
+</ol>
+<h3 id="1-2-2-Docker-容器平台介绍-11"><a href="#1-2-2-Docker-容器平台介绍-11" class="headerlink" title="1.2.2 Docker 容器平台介绍 11"></a>1.2.2 Docker 容器平台介绍 11</h3><p>Docker是第一个使容器成为主流的容器平台。Docker本身不提供进程隔离，而是由Linux命名空间和cgroups之类的内核特性完成。</p>
+<p>镜像层是只读的。容器运行时，一个新的可写层在镜像层之上被创建。 容器中进程写入位于底层的一个文件时，此文件的一个拷贝在顶层被创建，进程写的是此拷贝。</p>
+<p>Docker可以借助于镜像在不同操作系统之间移植，但是内核由运行容器的宿主机决定。如果一个容器化的应用需要一个特定的内核版本，那它可能不能在每台机器上都工作。 如果一台机器上运行了一个不匹配的 Linux 内核版本，或者没有相同内核模块可用，那么此应用就不能在其上运行。所以容器镜像存在移植性的限制，在不同CPU架构上构建的镜像不能通用。例如在x86平台构建的镜像，不能在arm平台使用。</p>
+<h3 id="1-2-3-rkt——一个-Docker-的替代方案-14"><a href="#1-2-3-rkt——一个-Docker-的替代方案-14" class="headerlink" title="1.2.3 rkt——一个 Docker 的替代方案 14"></a>1.2.3 rkt——一个 Docker 的替代方案 14</h3><p>开放容器计划OCI是围绕容器格式和运行时创建的开放工业标准。kubelet以CRI标准接口与OCI进行通信。rkt是另一个Linux容器引擎。</p>
+<p>本书集中使用Docker作为k8s的容器，它是k8s最初唯一支持的容器类型，但k8s目前也支持rkt等其它容器类型。</p>
+<h2 id="1-3-Kubernetes-介绍-15"><a href="#1-3-Kubernetes-介绍-15" class="headerlink" title="1.3 Kubernetes 介绍 15"></a>1.3 Kubernetes 介绍 15</h2><h3 id="1-3-1-初衷-15"><a href="#1-3-1-初衷-15" class="headerlink" title="1.3.1 初衷 15"></a>1.3.1 初衷 15</h3><p>在海量服务器规模下，有效处理部署管理，并提高基础设施利用率。</p>
+<h3 id="1-3-2-深入浅出地了解-Kubernetes-15"><a href="#1-3-2-深入浅出地了解-Kubernetes-15" class="headerlink" title="1.3.2 深入浅出地了解 Kubernetes 15"></a>1.3.2 深入浅出地了解 Kubernetes 15</h3><p>k8s整个系统由一个主节点和若干个工作节点组成。开发者把一个应用列表提交到主节点，k8s会将它们部署到集群的工作节点。组件被部署在哪个节点对于开发者和系统管理员来说都不用关心 。开发者能指定一些应用必须一起运行，k8s将会在一个工作节点上部署它们。其他的将被分散部署到集群中，但是不管部署在哪儿，它们都能以相同的方式互相通信。</p>
+<img width="500" src="/images/Kubernetes In Action阅读笔记/2.png">
+
+<h3 id="1-3-3-Kubernetes-集群架构-17"><a href="#1-3-3-Kubernetes-集群架构-17" class="headerlink" title="1.3.3 Kubernetes 集群架构 17"></a>1.3.3 Kubernetes 集群架构 17</h3><p>一个k8s集群由很多节点组成，分为两种类型：</p>
+<ol>
+<li>主节点：它承载着k8s控制和管理整个集群系统的控制面板。控制面板的组件持有井控制集群状态，但是它们不运行应用，运行应用是由工作节点完成的。</li>
+</ol>
+<ul>
+<li>API服务器：应用和其它控制面板组件都要和它通信。</li>
+<li>Scheculer：调度应用(为应用的每个可部署组件分配一个工作节点)。</li>
+<li>Controller Manager：执行集群级别的功能，如复制组件、持续跟踪工作节点、处理节点失败等。</li>
+<li>etcd：一个可靠的分布式数据存储，它能持久化存储集群配置。</li>
+</ul>
+<ol start="2">
+<li>工作节点：它们运行用户实际部署的应用。</li>
+</ol>
+<ul>
+<li>Docker、rkt或其它容器类型。</li>
+<li>Kubelet：与API服务器通信，并管理它所在节点的容器。</li>
+<li>kube-proxy：负责组件之间的负载均衡网络流量。</li>
+</ul>
+<img width="500" src="/images/Kubernetes In Action阅读笔记/3.png">
+
+<h3 id="1-3-4-在-Kubernetes-中运行应用-18"><a href="#1-3-4-在-Kubernetes-中运行应用-18" class="headerlink" title="1.3.4 在 Kubernetes 中运行应用 18"></a>1.3.4 在 Kubernetes 中运行应用 18</h3><p>在向k8提交描述符之后，它将把每个pod的指定副本数量调度到可用的工作节点上。 节点上的 Kubelets将告知Docker从镜像仓库中拉取 容器镜像井运行容器。 </p>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/4.png">
+
+<p>一旦应用程序运行起来，k8s就会不断地确认应用程序的部署状态始终与你提供的描述相匹配。</p>
+<p>k8s采用声明式的控制流，所有的资源声明都保存在etcd，所有的组件都通过API Server来声明或监听资源。只要资源被声明，那么监听资源的控制器就会开始工作，确保让各个资源实例达到声明的状态。</p>
+<h3 id="1-3-5-使用-Kubernetes-的好处-20"><a href="#1-3-5-使用-Kubernetes-的好处-20" class="headerlink" title="1.3.5 使用 Kubernetes 的好处 20"></a>1.3.5 使用 Kubernetes 的好处 20</h3><ul>
+<li>简化应用程序部署</li>
+<li>更好地利用硬件</li>
+<li>健康检查和自修复</li>
+<li>自动扩容</li>
+<li>敏捷交付</li>
+</ul>
+<h1 id="2-开始使用-Kubernetes-和-Docker-23"><a href="#2-开始使用-Kubernetes-和-Docker-23" class="headerlink" title="2 开始使用 Kubernetes 和 Docker 23"></a>2 开始使用 Kubernetes 和 Docker 23</h1><h2 id="2-1-创建、运行及共享容器镜像-23"><a href="#2-1-创建、运行及共享容器镜像-23" class="headerlink" title="2.1 创建、运行及共享容器镜像 23"></a>2.1 创建、运行及共享容器镜像 23</h2><p>容器中的进程是运行在主机操作系统上的，但是该进程的ID在主机上和容器中不同。容器使用独立的PID Linux命令空间并且有着独立的系列号，完全独立于进程树。</p>
+<p>正如拥有独立的进程树一 样，每个容器也拥有独立的文件系统。在容器内列出 根目录的内容，只会展示容器内的文件，包括镜像内的所有文件，再加上容器运行时创建的任何文件(类似日志文件)。</p>
+<p>使用是比较简单的，本文不赘述了。</p>
+<h2 id="2-2-配置-Kubernetes-集群-34"><a href="#2-2-配置-Kubernetes-集群-34" class="headerlink" title="2.2 配置 Kubernetes 集群 34"></a>2.2 配置 Kubernetes 集群 34</h2><p>主要讲如何创建k8s集群，讲了两个方法：用 Minikube 运行一个本地单节点 Kubernetes 集群；用 Google Kubernetes Engine 托管 Kubernetes 集群。以及为kubectl 配置别名和命令行补齐，方便命令输入。</p>
+<p>使用是比较简单的，本文不赘述了。</p>
+<h2 id="2-3-在-Kubernetes-上运行第一个应用-40"><a href="#2-3-在-Kubernetes-上运行第一个应用-40" class="headerlink" title="2.3 在 Kubernetes 上运行第一个应用 40"></a>2.3 在 Kubernetes 上运行第一个应用 40</h2><h3 id="2-3-1-部署-Node-js-应用-40"><a href="#2-3-1-部署-Node-js-应用-40" class="headerlink" title="2.3.1 部署 Node.js 应用 40"></a>2.3.1 部署 Node.js 应用 40</h3><p>一个pod是一组紧密相关的容器，它们总是一起运行在同一个工作节点上，以及同一个Linux命名空间中。每个pod就像一个独立的逻辑机器，拥有自己的IP、主机名、进程等，运行一个独立的应用程序。应用程序可以是单个进程，运行在单个容器中，也可以是一个主应用进程或者其他支持进程，每个进程都在自己的容器中运行。一个pod的所有容器都运行在同一个逻辑机器上，而其它pod中的容器，即使运行在同 一个工作节点上，也会出现在不同的节点上 。</p>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/5.png">
+
+<p>当运行kubectl命令时，它通过向API服务器发送一个REST HTTP请求，在集群中创建一个新的ReplicationController对象。然后，ReplicationController创建了一个新的pod，调度器将其调度到 一个工作节点上。Kubelet看到pod被调度到节点上，就告知Docker从镜像中心中拉取指定的镜像，因为本地没有该镜像。下载镜像后，Docker创建并运行容器。</p>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/6.png">
+
+<h3 id="2-3-2-访问-Web-应用-43"><a href="#2-3-2-访问-Web-应用-43" class="headerlink" title="2.3.2 访问 Web 应用 43"></a>2.3.2 访问 Web 应用 43</h3><p>每个pod有自己的IP地址，但是这个地址是集群内部的，不能从集群外部访问。要让pod能够从外部访问，需要通过服务对象公开它，要创建一个LoadBalancer类型的服务。它将创建一个外部的负载均衡，外部可以通过负载均衡的公共IP访问pod。</p>
+<h3 id="2-3-3-系统的逻辑部分-45"><a href="#2-3-3-系统的逻辑部分-45" class="headerlink" title="2.3.3 系统的逻辑部分 45"></a>2.3.3 系统的逻辑部分 45</h3><p>k8s的基本构件是pod，但是没有直接创建和使用pod。通过运行<code>kubectl run</code>命令，创建了一个ReplicationController，它用于创建pod实例 。为了使该pod能够从集群外部访问，需要让 k8s将 该ReplicationController管理的所有pod由一个服务对外暴露。服务表示一组或多组提供相同服务的pod的静态地址。到达服务IP和端口的请求将被转发到属于该服务的一个容器的IP和端口。</p>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/7.png">
+
+<h3 id="2-3-4-水平伸缩应用-46"><a href="#2-3-4-水平伸缩应用-46" class="headerlink" title="2.3.4 水平伸缩应用 46"></a>2.3.4 水平伸缩应用 46</h3><p>为了增加pod的副本数，需要改变ReplicationController期望的副本数。告诉k8s需要确保pod始终有三个实例在运行。成功后，请求会随机地切到不同的pod。</p>
+<blockquote>
+<p>应用本身需要支持水平伸缩。</p>
+</blockquote>
+<p>没有告诉k8s需要采取什么行动，也没有告诉k8s增加两个pod，只设置新的期望的实例数量并让 k8s决定需要采取哪些操作来实现期望的状态。这是k8s最基本的原则之一。不是告诉 k8s 应该执行什么操作，而是声明性地改变系统的期望状态，并让k8s检查当前的状态是否与期望的状态一致。在整个 k8s 世界中都是这样的——声明式设计。</p>
+<h3 id="2-3-5-查看应用运行在哪个节点上-49"><a href="#2-3-5-查看应用运行在哪个节点上-49" class="headerlink" title="2.3.5 查看应用运行在哪个节点上 49"></a>2.3.5 查看应用运行在哪个节点上 49</h3><p>不管调度到哪个节点，容器中运行的所有应用都具有相同类型的操作系统。每个pod都有自己的IP，并且可以与任何其他pod通信，不论其他pod是运行在同一 个节点上，还是运行在另一个节点上。每个pod都被分配到所需的计算资源，因此这些资源是由一个节点提供还是由另一个节点提供，并没有任何区别。</p>
+<h3 id="2-3-6-介绍-Kubernetes-dashboard-50"><a href="#2-3-6-介绍-Kubernetes-dashboard-50" class="headerlink" title="2.3.6 介绍 Kubernetes dashboard 50"></a>2.3.6 介绍 Kubernetes dashboard 50</h3><p>k8s的图形化用户界面。列出部署在集群中的所有pod、ReplicationController、服务和其他部署在集群中的对象， 以及创建、修改和删除它们。</p>
+<h2 id="2-4-本章的k8s命令"><a href="#2-4-本章的k8s命令" class="headerlink" title="2.4 本章的k8s命令"></a>2.4 本章的k8s命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">########## 集群 ##########  </span><br><span class="line"></span><br><span class="line"># 展示集群信息</span><br><span class="line">$ kubectl cluster-info</span><br><span class="line"></span><br><span class="line"># 获取dashboard的URL</span><br><span class="line">$ kubectl cluster-info | grep dashboard</span><br><span class="line"></span><br><span class="line">########## node ##########  </span><br><span class="line"></span><br><span class="line"># 列出集群节点</span><br><span class="line">$ kubectl get nodes</span><br><span class="line"></span><br><span class="line">########## pod ##########  </span><br><span class="line"></span><br><span class="line"># 列出所有pod</span><br><span class="line">$ kubectl get pods</span><br><span class="line">可以加上 -o wide 选项请求其它列</span><br><span class="line"></span><br><span class="line"># 描述一个pod</span><br><span class="line">$ kubectl describe pod kubia-hczji</span><br><span class="line"></span><br><span class="line">########## service ##########  </span><br><span class="line"></span><br><span class="line"># 列出所有服务</span><br><span class="line">$ kubectl get services(缩写svc)</span><br><span class="line"></span><br><span class="line">########## ReplicationController ##########  </span><br><span class="line"></span><br><span class="line"># 创建一个ReplicationController</span><br><span class="line">$ kubectl run kubia --image&#x3D;luksa&#x2F;kubia --port&#x3D;8080 --generator&#x3D;run&#x2F;v1</span><br><span class="line"></span><br><span class="line"># 改变ReplicationController期望的副本数</span><br><span class="line">$ kubectl scale re kubia --replicas&#x3D;3</span><br><span class="line"></span><br><span class="line"># 列出ReplicationController</span><br><span class="line">$ kubectl get replicationcontroller(缩写rc)</span><br><span class="line"></span><br><span class="line">########## LoadBalancer ##########  </span><br><span class="line"></span><br><span class="line"># 创建LoadBalancer服务对象</span><br><span class="line">$ kubectl expose rc kubia --type&#x3D;LoadBalancer --name kubia-http</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-pod-：运行于-Kubernetes-中的容器-53"><a href="#3-pod-：运行于-Kubernetes-中的容器-53" class="headerlink" title="3 pod ：运行于 Kubernetes 中的容器 53"></a>3 pod ：运行于 Kubernetes 中的容器 53</h1><p>pod是k8s中最重要的核心概念，而其他对象仅仅是在管理、 暴露pod或被pod使用。</p>
+<h2 id="3-1-介绍-pod-53"><a href="#3-1-介绍-pod-53" class="headerlink" title="3.1 介绍 pod 53"></a>3.1 介绍 pod 53</h2><p>当一个 pod包含多个容器时，这些容器总是运行于同一个工作节点上。一个pod绝不会跨越多个工作节点。</p>
+<h3 id="3-1-1-为何需要-pod-54"><a href="#3-1-1-为何需要-pod-54" class="headerlink" title="3.1.1 为何需要 pod 54"></a>3.1.1 为何需要 pod 54</h3><p>容器被设计为每个容器只运行一个进程(除非进程本身产生子进程)。如果在单个容器中运行多个不相关的进程，那么保持所有进程运行、管理它们的日志等将会是我们的责任。例如，我们需要包含一种在进程崩溃时能够自动重启的机制。同时这些进程都将记录到相同的标准输出中， 而此时我们将很难确定每个进程分别记录了什么。<br>我们需要让每个进程运行于自己的容器中，而这就是Docker和k8s期望使用的方式。<br>pod是k8s调度的最小单位，一个 pod可以包含一个或多个容器。</p>
+<h3 id="3-1-2-了解-pod-55"><a href="#3-1-2-了解-pod-55" class="headerlink" title="3.1.2 了解 pod 55"></a>3.1.2 了解 pod 55</h3><p>由于不能将多个进程聚集在一个单独的容器中，我们需要另一种更高级的结构来将容器绑定在一 起，并将它们作为一个单元进行管理，这就是pod背后的根本原理。</p>
+<p>k8s通过配置Docker来让一个pod内的所有容器共享相同的Linux命名空间，而不是每个容器都有自己的一组命名空间。</p>
+<p>由于一个pod中的所有容器都在相同的network和UTS命名空间下运行，所以它们都共享相同的主机名和网络接口。 同一个pod中的容器共享相同的IP地址和端口空间。同样地，这些容器也都在相同的IPC命名空间下运行，因此能够通过IPC进行通信。在最新的k8s和Docker版本中，它们也能够共享相同的PID命名空间（但是该特征默认是未激活的）。</p>
+<p>k8s集群的pod之间没有NAT网关，两个pod彼此之间发送网络数据包时，它们都会将对方的实际IP地址看作数据包中的源IP。</p>
+<h3 id="3-1-3-通过-pod-合理管理容器-56"><a href="#3-1-3-通过-pod-合理管理容器-56" class="headerlink" title="3.1.3 通过 pod 合理管理容器 56"></a>3.1.3 通过 pod 合理管理容器 56</h3><p>当决定是将两个容器放入一个pod还是 两个单独的pod时，我们需要问自己以下问题:</p>
+<ul>
+<li>它们需要 一起运行还是可以在不同的主机上运行?</li>
+<li>它们代表的是一个整体还是相互独立的组件?</li>
+<li>它们必须一起进行扩缩容还是可以分别进行? </li>
+</ul>
+<p>我们总是应该倾向于在单独的pod中运行容器，除非有特定的原因要求它们是同一pod的一部分。<br>比如常见的是sidecar容器，用于日志轮转器和收集器、数据处理器、通信适配器等。</p>
+<blockquote>
+<p>在实际业务场景中，在pod中使用多个容器，sidecar是最常见的方式。其它情况，需要三思。</p>
+</blockquote>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/8.png">
+
+<h2 id="3-2-以-YAML-或-JSON-描述文件创建-pod-58"><a href="#3-2-以-YAML-或-JSON-描述文件创建-pod-58" class="headerlink" title="3.2 以 YAML 或 JSON 描述文件创建 pod 58"></a>3.2 以 YAML 或 JSON 描述文件创建 pod 58</h2><p>pod和其它k8s资源通常是通过向k8s REST API提供JSON或YAML描述文件来创建的。<br>全面的文档在<a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_blank" rel="noopener">Kubernetes API参考文档</a>。</p>
+<h3 id="3-2-1-检查现有-pod-的-YAML-描述文件-59"><a href="#3-2-1-检查现有-pod-的-YAML-描述文件-59" class="headerlink" title="3.2.1 检查现有 pod 的 YAML 描述文件 59"></a>3.2.1 检查现有 pod 的 YAML 描述文件 59</h3><p>pod定义由这几个部分组成：首先是YAML中使用的k8s API版本和YAML描述的资源类型；其次是几乎在所有k8s资源中都可以找到的三大重要部分：</p>
+<ul>
+<li>metadata：包括名称、命名空间、标签和关于该容器的其他信息。</li>
+<li>spec：包含pod内容的实际说明，例如pod的容器、卷和其他数据。</li>
+<li>status：包含运行中的pod的当前信息，例如pod所处的条件、 每个容器的描述和状态，以及内部IP和其他基本信息。status只包含只读的运行时数据，在创建新的pod时，不需要提供status部分。</li>
+</ul>
+<h3 id="3-2-2-为-pod-创建一个简单的-YAML-描述文件-61"><a href="#3-2-2-为-pod-创建一个简单的-YAML-描述文件-61" class="headerlink" title="3.2.2 为 pod 创建一个简单的 YAML 描述文件 61"></a>3.2.2 为 pod 创建一个简单的 YAML 描述文件 61</h3><p>一个基本的pod描述文件非常简单。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: kubia-manual</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: luksa&#x2F;kubia</span><br><span class="line">    name: kubia</span><br><span class="line">    ports:</span><br><span class="line">    - containerPort: 8080</span><br><span class="line">      protocol: TCP</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-3-使用-kubectl-create-来创建-pod-63"><a href="#3-2-3-使用-kubectl-create-来创建-pod-63" class="headerlink" title="3.2.3 使用 kubectl create 来创建 pod 63"></a>3.2.3 使用 kubectl create 来创建 pod 63</h3><p><code>kubectl create -f</code>命令用于从YAML或JSON文件创建任何资源。创建后可以请求k8s获得完整的YAML和JSON格式的描述文件。</p>
+<h3 id="3-2-4-查看应用程序日志-64"><a href="#3-2-4-查看应用程序日志-64" class="headerlink" title="3.2.4 查看应用程序日志 64"></a>3.2.4 查看应用程序日志 64</h3><p>当日志文件达到一定大小时，容器日志会自动轮替。<code>kubectl logs</code>命令仅显示最后一次轮替后的日志条目。</p>
+<p>当一个pod被删除时，它的日志也会被删除。如果希望在pod删除之后仍然可以获取其日志，我们需要设置中心化的、集群范围的日志系统，将所有日志存储到中心存储中。 </p>
+<h3 id="3-2-5-向-pod-发送请求-65"><a href="#3-2-5-向-pod-发送请求-65" class="headerlink" title="3.2.5 向 pod 发送请求 65"></a>3.2.5 向 pod 发送请求 65</h3><p>如果要在外部访问pod，除了前面提到的lb service，还可以借助端口转发（常用于开发中测试pod）。端口转发通过<code>kubectl port-forward</code>命令完成。</p>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/9.png">
+
+<h2 id="3-3-使用标签组织-pod-66"><a href="#3-3-使用标签组织-pod-66" class="headerlink" title="3.3 使用标签组织 pod 66"></a>3.3 使用标签组织 pod 66</h2><p>通过一次操作对属于某个组的所有pod进行操作，而不必单独为每个pod执行操作。<br>标签可以做到这一点。通过标签来组织pod和所有其他k8s对象。</p>
+<h3 id="3-3-1-介绍标签-66"><a href="#3-3-1-介绍标签-66" class="headerlink" title="3.3.1 介绍标签 66"></a>3.3.1 介绍标签 66</h3><p>标签是可以附加到资源的任意键值对。通过标签选择器可以选择具有确切标签的资源。<br>标签和资源是多对多关系。</p>
+<p>比如常用的场景有，给每个pod标有两个标签。</p>
+<ul>
+<li>app：它指定pod属于哪个应用、 组件或微服务。</li>
+<li>rel：它显示在pod中运行的应用程序版本是stable、beta还是canary（用于金丝雀发布）。</li>
+</ul>
+<img width="600" src="/images/Kubernetes In Action阅读笔记/10.png">
+
+<h3 id="3-3-2-创建-pod-时指定标签-67"><a href="#3-3-2-创建-pod-时指定标签-67" class="headerlink" title="3.3.2 创建 pod 时指定标签 67"></a>3.3.2 创建 pod 时指定标签 67</h3><p>包含creation_method=manual，env=prod两个标签。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">metadata:</span><br><span class="line">  name: kubia-manual-v2</span><br><span class="line">  labels:</span><br><span class="line">    creation_method: manual</span><br><span class="line">    env: prod</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-3-修改现有-pod-的标签-68"><a href="#3-3-3-修改现有-pod-的标签-68" class="headerlink" title="3.3.3 修改现有 pod 的标签 68"></a>3.3.3 修改现有 pod 的标签 68</h3><p>标签可以在现有pod上进行添加和修改。</p>
+<h2 id="3-4-通过标签选择器列出-pod-子集-69"><a href="#3-4-通过标签选择器列出-pod-子集-69" class="headerlink" title="3.4 通过标签选择器列出 pod 子集 69"></a>3.4 通过标签选择器列出 pod 子集 69</h2><p>标签要与标签选择器结合，否则标签没有作用。</p>
+<h3 id="3-4-1-使用标签选择器列出-pod-69"><a href="#3-4-1-使用标签选择器列出-pod-69" class="headerlink" title="3.4.1 使用标签选择器列出 pod 69"></a>3.4.1 使用标签选择器列出 pod 69</h3><p>标签选择器根据资源的以下条件来选择资源：</p>
+<ul>
+<li>包含(或不包含)使用特定键的标签。</li>
+<li>包含具有特定键和值的标签。</li>
+<li>包含具有特定键的标签，但其值与我们指定的不同。</li>
+</ul>
+<h3 id="3-4-2-在标签选择器中使用多个条件-71"><a href="#3-4-2-在标签选择器中使用多个条件-71" class="headerlink" title="3.4.2 在标签选择器中使用多个条件 71"></a>3.4.2 在标签选择器中使用多个条件 71</h3><p>在包含多个逗号分隔的清况下，可以在标签选择器中同时使用多个条件。 此时，资源需要全部匹配才算成功匹配了选择器。</p>
+<h2 id="3-5-使用标签和选择器来约束-pod-调度-71"><a href="#3-5-使用标签和选择器来约束-pod-调度-71" class="headerlink" title="3.5 使用标签和选择器来约束 pod 调度 71"></a>3.5 使用标签和选择器来约束 pod 调度 71</h2><p>在硬件基础设施不是同质的情况下，比如想将执行GPU密集型运算的pod调度到提供GPU加速的节点上，需要约束pod的调度。这可以通过节点标签和节点标签选择器完成。</p>
+<h3 id="3-5-1-使用标签分类工作节点-72"><a href="#3-5-1-使用标签分类工作节点-72" class="headerlink" title="3.5.1 使用标签分类工作节点 72"></a>3.5.1 使用标签分类工作节点 72</h3><p>pod并不是唯一可以附加标签的k8s资源。标签可以附加到任何k8s对象上，包括节点。 </p>
+<h3 id="3-5-2-将-pod-调度到特定节点-72"><a href="#3-5-2-将-pod-调度到特定节点-72" class="headerlink" title="3.5.2 将 pod 调度到特定节点 72"></a>3.5.2 将 pod 调度到特定节点 72</h3><p>在spec部分添加了一个<code>nodeSelector</code>字段。当创建该pod时，调度器将只在包含标签gpu=true的节点中选择。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">spec:</span><br><span class="line">  nodeSelector:</span><br><span class="line">    gpu: &quot;true&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-3-调度到一个特定节点-73"><a href="#3-5-3-调度到一个特定节点-73" class="headerlink" title="3.5.3 调度到一个特定节点 73"></a>3.5.3 调度到一个特定节点 73</h3><p>也可以将pod调度到某个确定的节点，由于每个节点都有一个唯一标签，其中键为<code>kubernetes.io/hostname</code>， 值为该节点的实际主机名， 因此也可以将pod调度到某个确定的节点。但如果节点处于离线状态，通过hostname标签将nodeSelector设置为特定节点可能会导致pod不可调度。所以绝不应该考虑单个节点，而是应该通过标签选择器考虑符合特定标准的逻辑节点组。</p>
+<h2 id="3-6-注解-pod-73"><a href="#3-6-注解-pod-73" class="headerlink" title="3.6 注解 pod 73"></a>3.6 注解 pod 73</h2><p>pod和其它对象还可以包含注解。注解也是键值对。但是注解不能像标签一样用于对对象分组。不存在注解选择器这样的东西。</p>
+<h3 id="3-6-1-查找对象的注解-74"><a href="#3-6-1-查找对象的注解-74" class="headerlink" title="3.6.1 查找对象的注解 74"></a>3.6.1 查找对象的注解 74</h3><p>注解可以包含相对更多的数据，标签则是应该比较简短的。</p>
+<h3 id="3-6-2-添加和修改注解-74"><a href="#3-6-2-添加和修改注解-74" class="headerlink" title="3.6.2 添加和修改注解 74"></a>3.6.2 添加和修改注解 74</h3><p>通过<code>kubectl annotate</code>命令添加和修改注解。</p>
+<h2 id="3-7-使用命名空间对资源进行分组-75"><a href="#3-7-使用命名空间对资源进行分组-75" class="headerlink" title="3.7 使用命名空间对资源进行分组 75"></a>3.7 使用命名空间对资源进行分组 75</h2><p>k8s中可供声明的类称为资源（Resource），包括 pod、rs、deployment 等。声明一个资源构成的实例都有名字，这些名字都归属于一个个的命名空间之中（namespace），互不影响。</p>
+<h3 id="3-7-1-了解对命名空间的需求-75"><a href="#3-7-1-了解对命名空间的需求-75" class="headerlink" title="3.7.1 了解对命名空间的需求 75"></a>3.7.1 了解对命名空间的需求 75</h3><p>在使用多个namespace的前提下，可以将包含大量组件的复杂系统拆分为更小的不同组，这些不同组也可以用于在多租户环境中分配资源，将资源分配为生产、开发和QA环境。两个不同命名空间可以包含同名资源。</p>
+<blockquote>
+<p>我们在业务上也这样使用过，为了减小硬件开销，开发和QA环境使用同一套k8s集群，使用不同的namespace区分。</p>
+</blockquote>
+<h3 id="3-7-2-发现其他命名空间及其-pod-75"><a href="#3-7-2-发现其他命名空间及其-pod-75" class="headerlink" title="3.7.2 发现其他命名空间及其 pod 75"></a>3.7.2 发现其他命名空间及其 pod 75</h3><p>命名空间除了为资源名称提供了一个作用域，也可用于仅允许某些用户访问某些特定资源，甚至限制单个用户可用的计算资源数量。</p>
+<h3 id="3-7-3-创建一个命名空间-76"><a href="#3-7-3-创建一个命名空间-76" class="headerlink" title="3.7.3 创建一个命名空间 76"></a>3.7.3 创建一个命名空间 76</h3><p>k8s中的所有资源都是一个API对象。命名空间同理，所以创建namespace也可以用YAML文件描述，使用<code>kubectl create -f xxx.yaml</code>创建。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Namespace</span><br><span class="line">metadata:</span><br><span class="line">  name: custom-namespace</span><br></pre></td></tr></table></figure>
+
+<p>也可以通过<code>kubectl create namespace</code>命令创建。</p>
+<h3 id="3-7-4-管理其他命名空间中的对象-77"><a href="#3-7-4-管理其他命名空间中的对象-77" class="headerlink" title="3.7.4 管理其他命名空间中的对象 77"></a>3.7.4 管理其他命名空间中的对象 77</h3><p>在列出、描述、创建、修改、删除等操作中，需要给<code>kubectl</code>命令传递<code>--namespace</code>。否则<code>kubectl</code>在当前上下文中配置的默认命名空间执行操作。</p>
+<p>当前上下文的命名空间可以通过<code>kubectl config</code>修改。要想快速切换到不同的命名空间，可以设置以下别名：<code>alias kcd=&#39;kubectl config set-context $(kubectl config current-context) --namespace&#39;</code>。然后使用<code>kcd some-namespace</code>在命名空间之间进行切换。</p>
+<h3 id="3-7-5-命名空间提供的隔离-78"><a href="#3-7-5-命名空间提供的隔离-78" class="headerlink" title="3.7.5 命名空间提供的隔离 78"></a>3.7.5 命名空间提供的隔离 78</h3><p>你需要首先创建命名空间，然后再创建资源。</p>
+<p>k8s 包含三个预设的命名空间：</p>
+<ul>
+<li>default</li>
+<li>kube-public</li>
+<li>kube-system</li>
+</ul>
+<p>命名空间之间是否网络隔离依赖于k8s使用的NetworkPolicy的配置。</p>
+<h2 id="3-8-停止和移除-pod-78"><a href="#3-8-停止和移除-pod-78" class="headerlink" title="3.8 停止和移除 pod 78"></a>3.8 停止和移除 pod 78</h2><h3 id="3-8-1-按名称删除-pod-78"><a href="#3-8-1-按名称删除-pod-78" class="headerlink" title="3.8.1 按名称删除 pod 78"></a>3.8.1 按名称删除 pod 78</h3><p>在删除pod的过程中，实际上我们指示k8s终止该pod中的所有容器。k8s会向进程发送SIGTERM信号并等待一定时间，使其正常关闭（所以为了确保进程能正常关闭，业务代码中需要处理SIGTERM信号）。如果没有及时关闭，k8s则通过发送SIGKILL终止该进程。</p>
+<h3 id="3-8-2-使用标签选择器删除-pod-79"><a href="#3-8-2-使用标签选择器删除-pod-79" class="headerlink" title="3.8.2 使用标签选择器删除 pod 79"></a>3.8.2 使用标签选择器删除 pod 79</h3><p>可以使用标签一次删除所有指定标签的pod。</p>
+<h3 id="3-8-3-通过删除整个命名空间来删除-pod-80"><a href="#3-8-3-通过删除整个命名空间来删除-pod-80" class="headerlink" title="3.8.3 通过删除整个命名空间来删除 pod 80"></a>3.8.3 通过删除整个命名空间来删除 pod 80</h3><p>删除整个命名空间，pod将也会自动删除。</p>
+<h3 id="3-8-4-删除命名空间中的所有-pod，但保留命名空间-80"><a href="#3-8-4-删除命名空间中的所有-pod，但保留命名空间-80" class="headerlink" title="3.8.4 删除命名空间中的所有 pod，但保留命名空间 80"></a>3.8.4 删除命名空间中的所有 pod，但保留命名空间 80</h3><p>要删除pod，还需要删除ReplicationController，否则会根据YAML描述文件自动创建新的pod。因为k8s是声明式设计。</p>
+<h3 id="3-8-5-删除命名空间中的（几乎）所有资源-80"><a href="#3-8-5-删除命名空间中的（几乎）所有资源-80" class="headerlink" title="3.8.5 删除命名空间中的（几乎）所有资源 80"></a>3.8.5 删除命名空间中的（几乎）所有资源 80</h3><p><code>--all</code>删除所有内容并不是真的删除所有内容，一些资源例如secret会被保留下来，除非明确指定删除。</p>
+<h2 id="3-9-本章的k8s命令"><a href="#3-9-本章的k8s命令" class="headerlink" title="3.9 本章的k8s命令"></a>3.9 本章的k8s命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">########## 查看pod ########## </span><br><span class="line"></span><br><span class="line"># 查看已部署的pod的完整YAML</span><br><span class="line">$ kubectl get pod kubia-zxzij -o yaml</span><br><span class="line"></span><br><span class="line"># 查看API对象支持的属性和解释</span><br><span class="line">$ kubectl explain pods</span><br><span class="line">$ kubectl explain pods.spec</span><br><span class="line"></span><br><span class="line"># 得到运行中的pod的完整定义</span><br><span class="line">$ kubectl get pod kubia-manual -o yaml</span><br><span class="line">$ kubectl get pod kubia-manual -o json</span><br><span class="line"></span><br><span class="line">########## 创建资源 ##########  </span><br><span class="line"></span><br><span class="line"># 从文件(YAML或JSON)创建资源</span><br><span class="line">$ kubectl create -f kubia-manual.yaml</span><br><span class="line"></span><br><span class="line">########## 查看日志 ##########  </span><br><span class="line"></span><br><span class="line"># 查看pod日志(准确地说是容器的日志)</span><br><span class="line">$ kubectl logs kubia-manual -c kubia</span><br><span class="line"></span><br><span class="line">########## 端口转发 ##########  </span><br><span class="line"></span><br><span class="line"># 将本地端口8888转发到pod端口8080</span><br><span class="line">$ kubectl port-forward kubia-manual 8888:8080</span><br><span class="line"></span><br><span class="line">########## label ##########  </span><br><span class="line"></span><br><span class="line"># 列出pod，带上标签</span><br><span class="line">$ kubectl get pod --show-labels</span><br><span class="line"></span><br><span class="line"># 列出pod，仅展示指定标签</span><br><span class="line">$ kubectl get pod -L creation_method,env</span><br><span class="line"></span><br><span class="line"># 为pod添加标签</span><br><span class="line">$ kubectl label pod kubia-manual creation_method&#x3D;manual</span><br><span class="line"></span><br><span class="line"># 为pod修改标签</span><br><span class="line">$ kubectl label pod kubia-manual-v2 env&#x3D;debug --overwrite</span><br><span class="line"></span><br><span class="line"># 列出包含creation_method标签，值等于manual的pod</span><br><span class="line">$ kubectl get pod -l creation_method&#x3D;manual</span><br><span class="line"></span><br><span class="line"># 列出包含env标签的pod</span><br><span class="line">$ kubectl get pod -l env</span><br><span class="line"></span><br><span class="line"># 列出没有env标签的pod</span><br><span class="line">$ kubectl get pod -l &#39;!env&#39;</span><br><span class="line"></span><br><span class="line"># 其它标签筛选条件</span><br><span class="line">creation_method!&#x3D;manual：选择带有creation_method标签，并且值不等于manual的pod。</span><br><span class="line">env in (prod, devel)：选择带有env标签且值为prod或devel的pod。</span><br><span class="line">env notin (prod, devel)：选择带有env标签，但其值不是prod或devel的pod。</span><br><span class="line"></span><br><span class="line"># 给节点添加标签gpu&#x3D;true</span><br><span class="line">$ kubectl label node gke-kubia-85f6-node-orrx gpu&#x3D;true</span><br><span class="line"></span><br><span class="line"># 列出只包含标签gpu&#x3D;true的节点</span><br><span class="line">$ kubectl get nodes -l gpu&#x3D;true</span><br><span class="line"></span><br><span class="line"># 列出所有节点，展示gpu标签值附加列</span><br><span class="line">$ kubectl get nodes -L gpu</span><br><span class="line"></span><br><span class="line">########## annotations ##########  </span><br><span class="line"></span><br><span class="line"># 给pod添加注解，将注解mycompany.com&#x2F;someannotation添加为值foo bar</span><br><span class="line">$ kubectl annotate pod kubia-manual mycompany.com&#x2F;someannotation&#x3D;&quot;foo bar&quot;</span><br><span class="line"></span><br><span class="line"># 查看pod的注解</span><br><span class="line">$ kubectl describe pod kubia-manual | grep annotations</span><br><span class="line"></span><br><span class="line">########## namespace ##########</span><br><span class="line"></span><br><span class="line"># 列出所有命名空间</span><br><span class="line">$ kubectl get ns</span><br><span class="line"></span><br><span class="line"># 列出属于命名空间kube-system的pod</span><br><span class="line">$ kubectl get pod --namespace kube-system（--namespace的缩写是-n）</span><br><span class="line"></span><br><span class="line"># 创建命名空间</span><br><span class="line">$ kubectl create namespace custom-namespace</span><br><span class="line"></span><br><span class="line">########## 删除资源 ##########</span><br><span class="line"></span><br><span class="line"># 删除pod</span><br><span class="line">$ kubectl delete pod kubia-gpu</span><br><span class="line"></span><br><span class="line"># 删除指定标签的pod</span><br><span class="line">$ kubectl delete pod -l create_method&#x3D;manual</span><br><span class="line"></span><br><span class="line"># 删除指定命名空间</span><br><span class="line">$ kubectl delete ns custom-namespace</span><br><span class="line"></span><br><span class="line"># 删除当前命名空间中的所有pod</span><br><span class="line">$ kubectl delete pod --all</span><br><span class="line"></span><br><span class="line"># 删除当前命名空间的所有资源(并不是真的删除所有内容)</span><br><span class="line">$ kubectl delete all --all</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Pearl 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Pearl 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Pearl
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://pearlzju.github.io/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" title="《Kubernetes In Action》阅读笔记">https://pearlzju.github.io/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/06/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%20IO%E6%A8%A1%E5%9E%8B(%E4%B8%80)/" rel="next" title="深入理解Linux IO模型(一)">
+                <i class="fa fa-chevron-left"></i> 深入理解Linux IO模型(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/face.jpeg"
+                alt="Pearl" />
+            
+              <p class="site-author-name" itemprop="name">Pearl</p>
+              <p class="site-description motion-element" itemprop="description">爱自己是终身浪漫的开始</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Pearlzju" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:shanglin@zju.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/LINZJU" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i></a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.douban.com/people/104033946" target="_blank" title="豆瓣">
+                      
+                        <i class="fa fa-fw fa-globe"></i></a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#阅读之前"><span class="nav-number">1.</span> <span class="nav-text">阅读之前</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Kubernetes-介绍-1"><span class="nav-number">2.</span> <span class="nav-text">1 Kubernetes 介绍 1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Kubernetes-系统的需求-2"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 Kubernetes 系统的需求 2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-1-从单体应用到微服务-2"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.1.1 从单体应用到微服务 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-2-为应用程序提供一个一致的环境-5"><span class="nav-number">2.1.2.</span> <span class="nav-text">1.1.2 为应用程序提供一个一致的环境 5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-3-迈向持续交付-：DevOps-和无运维-6"><span class="nav-number">2.1.3.</span> <span class="nav-text">1.1.3 迈向持续交付 ：DevOps 和无运维 6</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-介绍容器技术-7"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 介绍容器技术 7</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-什么是容器-7"><span class="nav-number">2.2.1.</span> <span class="nav-text">1.2.1 什么是容器 7</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-Docker-容器平台介绍-11"><span class="nav-number">2.2.2.</span> <span class="nav-text">1.2.2 Docker 容器平台介绍 11</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-rkt——一个-Docker-的替代方案-14"><span class="nav-number">2.2.3.</span> <span class="nav-text">1.2.3 rkt——一个 Docker 的替代方案 14</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Kubernetes-介绍-15"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 Kubernetes 介绍 15</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-初衷-15"><span class="nav-number">2.3.1.</span> <span class="nav-text">1.3.1 初衷 15</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-深入浅出地了解-Kubernetes-15"><span class="nav-number">2.3.2.</span> <span class="nav-text">1.3.2 深入浅出地了解 Kubernetes 15</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-Kubernetes-集群架构-17"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.3.3 Kubernetes 集群架构 17</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-4-在-Kubernetes-中运行应用-18"><span class="nav-number">2.3.4.</span> <span class="nav-text">1.3.4 在 Kubernetes 中运行应用 18</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-5-使用-Kubernetes-的好处-20"><span class="nav-number">2.3.5.</span> <span class="nav-text">1.3.5 使用 Kubernetes 的好处 20</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-开始使用-Kubernetes-和-Docker-23"><span class="nav-number">3.</span> <span class="nav-text">2 开始使用 Kubernetes 和 Docker 23</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-创建、运行及共享容器镜像-23"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 创建、运行及共享容器镜像 23</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-配置-Kubernetes-集群-34"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 配置 Kubernetes 集群 34</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-在-Kubernetes-上运行第一个应用-40"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 在 Kubernetes 上运行第一个应用 40</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-部署-Node-js-应用-40"><span class="nav-number">3.3.1.</span> <span class="nav-text">2.3.1 部署 Node.js 应用 40</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-访问-Web-应用-43"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.3.2 访问 Web 应用 43</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-系统的逻辑部分-45"><span class="nav-number">3.3.3.</span> <span class="nav-text">2.3.3 系统的逻辑部分 45</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-4-水平伸缩应用-46"><span class="nav-number">3.3.4.</span> <span class="nav-text">2.3.4 水平伸缩应用 46</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-5-查看应用运行在哪个节点上-49"><span class="nav-number">3.3.5.</span> <span class="nav-text">2.3.5 查看应用运行在哪个节点上 49</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-6-介绍-Kubernetes-dashboard-50"><span class="nav-number">3.3.6.</span> <span class="nav-text">2.3.6 介绍 Kubernetes dashboard 50</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-本章的k8s命令"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 本章的k8s命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-pod-：运行于-Kubernetes-中的容器-53"><span class="nav-number">4.</span> <span class="nav-text">3 pod ：运行于 Kubernetes 中的容器 53</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-介绍-pod-53"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 介绍 pod 53</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-1-为何需要-pod-54"><span class="nav-number">4.1.1.</span> <span class="nav-text">3.1.1 为何需要 pod 54</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-了解-pod-55"><span class="nav-number">4.1.2.</span> <span class="nav-text">3.1.2 了解 pod 55</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-3-通过-pod-合理管理容器-56"><span class="nav-number">4.1.3.</span> <span class="nav-text">3.1.3 通过 pod 合理管理容器 56</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-以-YAML-或-JSON-描述文件创建-pod-58"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 以 YAML 或 JSON 描述文件创建 pod 58</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-检查现有-pod-的-YAML-描述文件-59"><span class="nav-number">4.2.1.</span> <span class="nav-text">3.2.1 检查现有 pod 的 YAML 描述文件 59</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-为-pod-创建一个简单的-YAML-描述文件-61"><span class="nav-number">4.2.2.</span> <span class="nav-text">3.2.2 为 pod 创建一个简单的 YAML 描述文件 61</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-使用-kubectl-create-来创建-pod-63"><span class="nav-number">4.2.3.</span> <span class="nav-text">3.2.3 使用 kubectl create 来创建 pod 63</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-4-查看应用程序日志-64"><span class="nav-number">4.2.4.</span> <span class="nav-text">3.2.4 查看应用程序日志 64</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-5-向-pod-发送请求-65"><span class="nav-number">4.2.5.</span> <span class="nav-text">3.2.5 向 pod 发送请求 65</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-使用标签组织-pod-66"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 使用标签组织 pod 66</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-1-介绍标签-66"><span class="nav-number">4.3.1.</span> <span class="nav-text">3.3.1 介绍标签 66</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-2-创建-pod-时指定标签-67"><span class="nav-number">4.3.2.</span> <span class="nav-text">3.3.2 创建 pod 时指定标签 67</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-3-修改现有-pod-的标签-68"><span class="nav-number">4.3.3.</span> <span class="nav-text">3.3.3 修改现有 pod 的标签 68</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-通过标签选择器列出-pod-子集-69"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 通过标签选择器列出 pod 子集 69</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-1-使用标签选择器列出-pod-69"><span class="nav-number">4.4.1.</span> <span class="nav-text">3.4.1 使用标签选择器列出 pod 69</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-2-在标签选择器中使用多个条件-71"><span class="nav-number">4.4.2.</span> <span class="nav-text">3.4.2 在标签选择器中使用多个条件 71</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-使用标签和选择器来约束-pod-调度-71"><span class="nav-number">4.5.</span> <span class="nav-text">3.5 使用标签和选择器来约束 pod 调度 71</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-1-使用标签分类工作节点-72"><span class="nav-number">4.5.1.</span> <span class="nav-text">3.5.1 使用标签分类工作节点 72</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-2-将-pod-调度到特定节点-72"><span class="nav-number">4.5.2.</span> <span class="nav-text">3.5.2 将 pod 调度到特定节点 72</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-3-调度到一个特定节点-73"><span class="nav-number">4.5.3.</span> <span class="nav-text">3.5.3 调度到一个特定节点 73</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-注解-pod-73"><span class="nav-number">4.6.</span> <span class="nav-text">3.6 注解 pod 73</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-1-查找对象的注解-74"><span class="nav-number">4.6.1.</span> <span class="nav-text">3.6.1 查找对象的注解 74</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-2-添加和修改注解-74"><span class="nav-number">4.6.2.</span> <span class="nav-text">3.6.2 添加和修改注解 74</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-7-使用命名空间对资源进行分组-75"><span class="nav-number">4.7.</span> <span class="nav-text">3.7 使用命名空间对资源进行分组 75</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-1-了解对命名空间的需求-75"><span class="nav-number">4.7.1.</span> <span class="nav-text">3.7.1 了解对命名空间的需求 75</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-2-发现其他命名空间及其-pod-75"><span class="nav-number">4.7.2.</span> <span class="nav-text">3.7.2 发现其他命名空间及其 pod 75</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-3-创建一个命名空间-76"><span class="nav-number">4.7.3.</span> <span class="nav-text">3.7.3 创建一个命名空间 76</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-4-管理其他命名空间中的对象-77"><span class="nav-number">4.7.4.</span> <span class="nav-text">3.7.4 管理其他命名空间中的对象 77</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-5-命名空间提供的隔离-78"><span class="nav-number">4.7.5.</span> <span class="nav-text">3.7.5 命名空间提供的隔离 78</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-8-停止和移除-pod-78"><span class="nav-number">4.8.</span> <span class="nav-text">3.8 停止和移除 pod 78</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-1-按名称删除-pod-78"><span class="nav-number">4.8.1.</span> <span class="nav-text">3.8.1 按名称删除 pod 78</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-2-使用标签选择器删除-pod-79"><span class="nav-number">4.8.2.</span> <span class="nav-text">3.8.2 使用标签选择器删除 pod 79</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-3-通过删除整个命名空间来删除-pod-80"><span class="nav-number">4.8.3.</span> <span class="nav-text">3.8.3 通过删除整个命名空间来删除 pod 80</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-4-删除命名空间中的所有-pod，但保留命名空间-80"><span class="nav-number">4.8.4.</span> <span class="nav-text">3.8.4 删除命名空间中的所有 pod，但保留命名空间 80</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-5-删除命名空间中的（几乎）所有资源-80"><span class="nav-number">4.8.5.</span> <span class="nav-text">3.8.5 删除命名空间中的（几乎）所有资源 80</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-9-本章的k8s命令"><span class="nav-number">4.9.</span> <span class="nav-text">3.9 本章的k8s命令</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Pearl</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'ECUWkqa8FVLG7NN721RUeTXk-gzGzoHsz',
+        appKey: 'BEMbJ6wNDs62iTOP3UAxzVle',
+        placeholder: '说点什么呢',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ECUWkqa8FVLG7NN721RUeTXk-gzGzoHsz", "BEMbJ6wNDs62iTOP3UAxzVle");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
