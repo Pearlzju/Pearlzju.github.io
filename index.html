@@ -270,6 +270,174 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pearlzju.github.io/2021/06/16/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0(%E4%BA%8C)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Pearl">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/face.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Pearl 的个人小站">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/06/16/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0(%E4%BA%8C)/" itemprop="url">《Kubernetes In Action》阅读笔记(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-16T11:06:05+08:00">
+                2021-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/06/16/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0(%E4%BA%8C)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/06/16/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0(%E4%BA%8C)/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2021/06/16/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0(%E4%BA%8C)/" class="leancloud_visitors" data-flag-title="《Kubernetes In Action》阅读笔记(二)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>[TOC]</p>
+<blockquote>
+<p>本文是把《Kubernetes In Action》读薄的摘抄或转述，仅供参考。系统学习请阅读原书。<br>k8s的命令繁多，熟练使用它们提高工作效率和理解k8s设计思想同等重要，每章最后总结了该章涉及的命令。</p>
+</blockquote>
+<img width="300" src="/images/Kubernetes In Action阅读笔记/0.png">
+
+<h1 id="5-服务-：让客户端发现-pod-并与之通信-121"><a href="#5-服务-：让客户端发现-pod-并与之通信-121" class="headerlink" title="5 服务 ：让客户端发现 pod 并与之通信 121"></a>5 服务 ：让客户端发现 pod 并与之通信 121</h1><h2 id="5-1-介绍服务-122"><a href="#5-1-介绍服务-122" class="headerlink" title="5.1 介绍服务 122"></a>5.1 介绍服务 122</h2><h3 id="5-1-1-创建服务-123"><a href="#5-1-1-创建服务-123" class="headerlink" title="5.1.1 创建服务 123"></a>5.1.1 创建服务 123</h3><h3 id="5-1-2-服务发现-129"><a href="#5-1-2-服务发现-129" class="headerlink" title="5.1.2 服务发现 129"></a>5.1.2 服务发现 129</h3><h2 id="5-2-连接集群外部的服务-132"><a href="#5-2-连接集群外部的服务-132" class="headerlink" title="5.2 连接集群外部的服务 132"></a>5.2 连接集群外部的服务 132</h2><h3 id="5-2-1-介绍服务-endpoint-133"><a href="#5-2-1-介绍服务-endpoint-133" class="headerlink" title="5.2.1 介绍服务 endpoint 133"></a>5.2.1 介绍服务 endpoint 133</h3><h3 id="5-2-2-手动配置服务的-endpoint-133"><a href="#5-2-2-手动配置服务的-endpoint-133" class="headerlink" title="5.2.2 手动配置服务的 endpoint 133"></a>5.2.2 手动配置服务的 endpoint 133</h3><h3 id="5-2-3-为外部服务创建别名-135"><a href="#5-2-3-为外部服务创建别名-135" class="headerlink" title="5.2.3 为外部服务创建别名 135"></a>5.2.3 为外部服务创建别名 135</h3><h2 id="5-3-将服务暴露给外部客户端-136"><a href="#5-3-将服务暴露给外部客户端-136" class="headerlink" title="5.3 将服务暴露给外部客户端 136"></a>5.3 将服务暴露给外部客户端 136</h2><h3 id="5-3-1-使用-NodePort-类型的服务-137"><a href="#5-3-1-使用-NodePort-类型的服务-137" class="headerlink" title="5.3.1 使用 NodePort 类型的服务 137"></a>5.3.1 使用 NodePort 类型的服务 137</h3><h3 id="5-3-2-通过负载均衡器将服务暴露出来-140"><a href="#5-3-2-通过负载均衡器将服务暴露出来-140" class="headerlink" title="5.3.2 通过负载均衡器将服务暴露出来 140"></a>5.3.2 通过负载均衡器将服务暴露出来 140</h3><h3 id="5-3-3-了解外部连接的特性-142"><a href="#5-3-3-了解外部连接的特性-142" class="headerlink" title="5.3.3 了解外部连接的特性 142"></a>5.3.3 了解外部连接的特性 142</h3><h2 id="5-4-通过-Ingress-暴露服务-143"><a href="#5-4-通过-Ingress-暴露服务-143" class="headerlink" title="5.4 通过 Ingress 暴露服务 143"></a>5.4 通过 Ingress 暴露服务 143</h2><h3 id="5-4-1-创建-Ingress-资源-145"><a href="#5-4-1-创建-Ingress-资源-145" class="headerlink" title="5.4.1 创建 Ingress 资源 145"></a>5.4.1 创建 Ingress 资源 145</h3><h3 id="5-4-2-通过-Ingress-访问服务-146"><a href="#5-4-2-通过-Ingress-访问服务-146" class="headerlink" title="5.4.2 通过 Ingress 访问服务 146"></a>5.4.2 通过 Ingress 访问服务 146</h3><h3 id="5-4-3-通过相同的-Ingress-暴露多个服务-147"><a href="#5-4-3-通过相同的-Ingress-暴露多个服务-147" class="headerlink" title="5.4.3 通过相同的 Ingress 暴露多个服务 147"></a>5.4.3 通过相同的 Ingress 暴露多个服务 147</h3><h3 id="5-4-4-配置-Ingress-处理-TLS-传输-149"><a href="#5-4-4-配置-Ingress-处理-TLS-传输-149" class="headerlink" title="5.4.4 配置 Ingress 处理 TLS 传输 149"></a>5.4.4 配置 Ingress 处理 TLS 传输 149</h3><h2 id="5-5-pod-就绪后发出信号-150"><a href="#5-5-pod-就绪后发出信号-150" class="headerlink" title="5.5 pod 就绪后发出信号 150"></a>5.5 pod 就绪后发出信号 150</h2><h3 id="5-5-1-介绍就绪探针-151"><a href="#5-5-1-介绍就绪探针-151" class="headerlink" title="5.5.1 介绍就绪探针 151"></a>5.5.1 介绍就绪探针 151</h3><h3 id="5-5-2-向-pod-添加就绪探针-152"><a href="#5-5-2-向-pod-添加就绪探针-152" class="headerlink" title="5.5.2 向 pod 添加就绪探针 152"></a>5.5.2 向 pod 添加就绪探针 152</h3><h3 id="5-5-3-了解就绪探针的实际作用-154"><a href="#5-5-3-了解就绪探针的实际作用-154" class="headerlink" title="5.5.3 了解就绪探针的实际作用 154"></a>5.5.3 了解就绪探针的实际作用 154</h3><h2 id="5-6-使用-headless-服务来发现独立的-pod-155"><a href="#5-6-使用-headless-服务来发现独立的-pod-155" class="headerlink" title="5.6 使用 headless 服务来发现独立的 pod 155"></a>5.6 使用 headless 服务来发现独立的 pod 155</h2><h3 id="5-6-1-创建-headless-服务-156"><a href="#5-6-1-创建-headless-服务-156" class="headerlink" title="5.6.1 创建 headless 服务 156"></a>5.6.1 创建 headless 服务 156</h3><h3 id="5-6-2-通过-DNS-发现-pod-156"><a href="#5-6-2-通过-DNS-发现-pod-156" class="headerlink" title="5.6.2 通过 DNS 发现 pod 156"></a>5.6.2 通过 DNS 发现 pod 156</h3><h3 id="5-6-3-发现所有的-pod——包括未就绪的-pod-157"><a href="#5-6-3-发现所有的-pod——包括未就绪的-pod-157" class="headerlink" title="5.6.3 发现所有的 pod——包括未就绪的 pod 157"></a>5.6.3 发现所有的 pod——包括未就绪的 pod 157</h3><h2 id="5-7-排除服务故障-158"><a href="#5-7-排除服务故障-158" class="headerlink" title="5.7 排除服务故障 158"></a>5.7 排除服务故障 158</h2><h2 id="5-8-本章的k8s命令-159"><a href="#5-8-本章的k8s命令-159" class="headerlink" title="5.8 本章的k8s命令 159"></a>5.8 本章的k8s命令 159</h2>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://pearlzju.github.io/2021/06/13/%E3%80%8AKubernetes%20In%20Action%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0(%E4%B8%80)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -390,7 +558,7 @@
 </blockquote>
 <img width="300" src="/images/Kubernetes In Action阅读笔记/0.png">
 
-<h1 id="阅读之前"><a href="#阅读之前" class="headerlink" title="阅读之前"></a>阅读之前</h1><p>2019~2020年期间，在工作上使用过Istio来治理微服务，Istio与Kubernetes(k8s)紧密集合。我们的业务是一个云计算Iass和Paas平台，我们把计算、网络、存储、安全、数据库、负载均衡和监控等模块拆分成微服务，用k8s管理，每个服务以pod的形式部署，每个pod中运行两个容器，业务容器和sidecar。当时我只是在项目中应用了istio+k8s，没有系统学习过k8s的设计思想。最近因为工作再次接触k8s，于是挑选了《Kubernetes In Action》进行系统学习和温故而知新，这确实是一本不多见的涵盖广阔提纲挈领的好书。</p>
+<p>2019~2020年期间，在工作上使用过Istio来治理微服务，Istio与Kubernetes(k8s)紧密集合。我们的业务是一个云计算Iass和Paas平台，我们把计算、网络、存储、安全、数据库、负载均衡和监控等模块拆分成微服务，用k8s管理，每个服务以pod的形式部署，每个pod中运行两个容器，业务容器和sidecar。当时我只是在项目中应用了istio+k8s，没有系统学习过k8s的设计思想。最近因为工作再次接触k8s，于是挑选了《Kubernetes In Action》进行系统学习和温故而知新，这确实是一本不多见的涵盖广阔提纲挈领的好书。</p>
 <p>微服务架构，它从管理上获取对服务的抽象，方便服务的管理和规划服务的边界。但它因为引入了很多新的机制，比如注册中心等，其实对硬件而言是一种牺牲。舍弃一定的性能，换来的是服务的治理、团队协作开发的方便，这就是微服务架构的价值。</p>
 <p>程序的本质从不同角度观察，会有不同的见解，就像光的波粒二象性。我的观点是不浪费硬件是对提升性能最大的帮助。会有听到微服务解决了高并发问题的说法，但微服务和高并发其实没有必然关系。而是因为通常微服务会使用分布式方式部署，硬件资源包括CPU、网络、磁盘等成倍增加，所以分布式对高并发问题有积极作用。</p>
 <p>Istio，它其实不局限于微服务治理范畴，任何服务，只要服务间有访问，需要对服务间的通信进行管理，都可以使用Istio。</p>
@@ -1789,7 +1957,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
