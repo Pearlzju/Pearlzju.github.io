@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B5%85%E6%9E%90Golang%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/2.png">
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B5%85%E6%9E%90Golang%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/7.png">
 <meta property="article:published_time" content="2021-06-26T07:56:08.234Z">
-<meta property="article:modified_time" content="2021-06-28T10:20:51.455Z">
+<meta property="article:modified_time" content="2021-06-28T10:38:52.160Z">
 <meta property="article:author" content="Pearl">
 <meta property="article:tag" content="Golang">
 <meta name="twitter:card" content="summary">
@@ -417,8 +417,8 @@
 <li>进程的多个线程共享heap。</li>
 <li>从堆上分配的内存用完后必须归还给堆，否则内存分配器可能会反复向操作系统申请扩展堆的大小，最后内存不足导致内存泄露。</li>
 </ol>
-<p>所以，我们讨论内存管理，指的是堆内存管理。在C/C++中由开发者主动申请和释放(提供malloc、free等方法来管理内存)，涉及用户态和内核态切换；在Go中由<code>runtime</code>来进行内存管理，通过内存分配器分配和垃圾处理器(Garbage collection,GC)回收，从而避免频繁的向操作系统申请、释放内存，有效的提升Go的性能。</p>
-<p>内存管理的流程简单可以描述是：用户程序通过内存分配器申请内存，内存分配器负责从堆中初始化相应的内存区域，再被内存收集器回收。</p>
+<p>所以，我们讨论内存管理，指的是堆内存管理。在C/C++中由开发者主动申请和释放(提供malloc、free等方法来管理内存)，涉及用户态和内核态切换；在Go中由<code>runtime</code>来进行内存管理，通过内存分配器分配和垃圾处理器(Garbage collection,GC)回收，从而避免频繁地向操作系统申请、释放内存，有效地提升程序的性能。</p>
+<p>内存管理的流程简单可以描述是：程序通过内存分配器申请内存，内存分配器负责从堆中初始化相应的内存区域，再被内存收集器回收。</p>
 <p>如果堆上有足够的空间满足程序的内存申请，内存分配器可以完成内存申请无需内核参与，否则将通过操作系统调用(brk)进行扩展堆内存。</p>
 <p>如果让我们设计内存管理，如何保证高效稳定？</p>
 <ul>
@@ -436,7 +436,7 @@
 <img width="800" src="/images/浅析Golang的内存管理/3.png">
 
 <p><code>mspan</code>结构体的定义在<code>src/runtime/mheap.go</code>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mspan <span class="keyword">struct</span> &#123;</span><br><span class="line">		next *mspan     <span class="comment">// 链表下一个span地址</span></span><br><span class="line">		prev *mspan     <span class="comment">// 链表前一个span地址</span></span><br><span class="line">		list *mSpanList <span class="comment">// 链表地址</span></span><br><span class="line"></span><br><span class="line">		startAddr <span class="keyword">uintptr</span> <span class="comment">// 该span在arena区域的起始地址</span></span><br><span class="line">		npages    <span class="keyword">uintptr</span> <span class="comment">// 该span占用arena区域page的数量</span></span><br><span class="line">		spanclass   spanClass  <span class="comment">// span分类</span></span><br><span class="line">		...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mspan <span class="keyword">struct</span> &#123;</span><br><span class="line">  next *mspan     <span class="comment">// 链表下一个span地址</span></span><br><span class="line">  prev *mspan     <span class="comment">// 链表前一个span地址</span></span><br><span class="line">  list *mSpanList <span class="comment">// 链表地址</span></span><br><span class="line"></span><br><span class="line">  startAddr <span class="keyword">uintptr</span> <span class="comment">// 该span在arena区域的起始地址</span></span><br><span class="line">  npages    <span class="keyword">uintptr</span> <span class="comment">// 该span占用arena区域page的数量</span></span><br><span class="line">  spanclass   spanClass  <span class="comment">// span分类</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="怎么区分span"><a href="#怎么区分span" class="headerlink" title="怎么区分span"></a>怎么区分span</h3><p>每个span通过span class标识属于哪种规格的span。Go的span规格一共有67种。</p>
 <p>规格的定义在<code>src/runtime/sizeclasses.go</code>。</p>
@@ -458,12 +458,13 @@
 <p>对于每一种规格都有两个类型：</p>
 <ul>
 <li>scan：包含指针的对象。</li>
-<li>noscan：不包含指针的对象。<br>采用这种方法的好处之一就是进行gc时，noscan对象无需进一步扫描是否引用其他活跃的对象。</li>
+<li>noscan：不包含指针的对象。</li>
 </ul>
+<p>采用这种方法的好处之一就是进行gc时，noscan对象无需进一步扫描是否引用其他活跃的对象。</p>
 <img width="1000" src="/images/浅析Golang的内存管理/4.png">
 
 <p><code>mcache</code>结构体的定义在<code>src/runtime/mcache.go</code>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcache <span class="keyword">struct</span> &#123; </span><br><span class="line">		tiny             <span class="keyword">uintptr</span> <span class="comment">// 申请小对象的起始地址</span></span><br><span class="line">		tinyoffset       <span class="keyword">uintptr</span> <span class="comment">// 从起始地址tiny开始的偏移量</span></span><br><span class="line">		local_tinyallocs <span class="keyword">uintptr</span> <span class="comment">// tiny对象分配的数量   </span></span><br><span class="line">		alloc [numSpanClasses]*mspan <span class="comment">// 分配的mspan list，其中numSpanClasses=134，索引是splanclassId</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcache <span class="keyword">struct</span> &#123; </span><br><span class="line">  tiny             <span class="keyword">uintptr</span> <span class="comment">// 申请小对象的起始地址</span></span><br><span class="line">  tinyoffset       <span class="keyword">uintptr</span> <span class="comment">// 从起始地址tiny开始的偏移量</span></span><br><span class="line">  local_tinyallocs <span class="keyword">uintptr</span> <span class="comment">// tiny对象分配的数量   </span></span><br><span class="line">  alloc [numSpanClasses]*mspan <span class="comment">// 分配的mspan list，其中numSpanClasses=134，索引是spanClassId</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>关注下<code>alloc [numSpanClasses]*mspan</code>这行定义，因为span class一共有67种，为了满足指针对象和非指针对象，每种规格的span准备scan和noscan两种，因此alloc数组有134个<code>*mspan</code>，分别指向<code>mspan</code>双向链表。</p>
 <p>Go对于[16B,32KB]的对象都会从alloc这个数组找，使用这部分的相应大小规格的span分配内存。</p>
@@ -489,7 +490,7 @@
 <img width="1000" src="/images/浅析Golang的内存管理/6.png">
 
 <p><code>mheap</code>结构体的定义在<code>src/runtime/mheap.go</code>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mheap <span class="keyword">struct</span> &#123;</span><br><span class="line">		lock      mutex</span><br><span class="line">		allspans []*mspan <span class="comment">// 所有的spans</span></span><br><span class="line">		arenas [<span class="number">1</span> &lt;&lt; arenaL1Bits]*[<span class="number">1</span> &lt;&lt; arenaL2Bits]*heapArena <span class="comment">// arenas数组集合，管理各个heapArena</span></span><br><span class="line">		allArenas []arenaIdx <span class="comment">// 所有arena序号集合,可以根据arenaIdx算出对应arenas中的哪一个heapArena</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 各个规格的mcentral集合</span></span><br><span class="line">		central [numSpanClasses]<span class="keyword">struct</span> &#123;</span><br><span class="line">				mcentral mcentral</span><br><span class="line">				pad      [cpu.CacheLinePadSize - unsafe.Sizeof(mcentral&#123;&#125;)%cpu.CacheLinePadSize]<span class="keyword">byte</span></span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mheap <span class="keyword">struct</span> &#123;</span><br><span class="line">  lock      mutex</span><br><span class="line">  allspans []*mspan <span class="comment">// 所有的spans</span></span><br><span class="line">  arenas [<span class="number">1</span> &lt;&lt; arenaL1Bits]*[<span class="number">1</span> &lt;&lt; arenaL2Bits]*heapArena <span class="comment">// arenas数组集合，管理各个heapArena</span></span><br><span class="line">  allArenas []arenaIdx <span class="comment">// 所有arena序号集合,可以根据arenaIdx算出对应arenas中的哪一个heapArena</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 各个规格的mcentral集合</span></span><br><span class="line">  central [numSpanClasses]<span class="keyword">struct</span> &#123;</span><br><span class="line">  mcentral mcentral</span><br><span class="line">  pad      [cpu.CacheLinePadSize - unsafe.Sizeof(mcentral&#123;&#125;)%cpu.CacheLinePadSize]<span class="keyword">byte</span></span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>每个Go程序启动的时候，会向操作系统申请一块虚拟内存空间，放在<code>heapArena</code>数组里，用于应用程序内存分配。</p>
 <p>heapArena分为三个区域：</p>
@@ -518,7 +519,7 @@
 </ul>
 <img width="1000" src="/images/浅析Golang的内存管理/7.png">
 
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[1].<a href="https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed" target="_blank" rel="noopener">https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed</a><br>[2].<a href="https://draveness.me/golang/" target="_blank" rel="noopener">https://draveness.me/golang/</a></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[1]. <a href="https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed" target="_blank" rel="noopener">https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed</a><br>[2]. <a href="https://draveness.me/golang/" target="_blank" rel="noopener">https://draveness.me/golang/</a><br>[3]. <a href="http://goog-perftools.sourceforge.net/doc/tcmalloc.html" target="_blank" rel="noopener">http://goog-perftools.sourceforge.net/doc/tcmalloc.html</a></p>
 <blockquote>
 <p>下一节将Go的垃圾回收。</p>
 </blockquote>
