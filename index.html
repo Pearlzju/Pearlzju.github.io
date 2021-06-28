@@ -434,7 +434,7 @@
 <ul>
 <li>class: span class，规格ID，表示该span可以存储的对象规格类型。</li>
 <li>bytes/obj：表示能存储多大的对象(单位字节)。</li>
-<li>bytes/span：每个span占用堆的大小(单位字节)，即<code>页数*页</code>，<code>npages*8KB</code>。</li>
+<li>bytes/span：每个span占用堆的大小(单位字节)，即<code>页数*页</code>(<code>npages*8KB</code>)。</li>
 <li>objects：每个span可存储的对象个数，即<code>(bytes/span)/(bytes/obj)</code>。</li>
 <li>tail bytes：每个span产生的内存碎片，即<code>(bytes/span)%(bytes/obj)</code>。</li>
 <li>max waste：最大浪费比例。计算公式是<code>(bytes/obj-最小使用量)*objects/(bytes/span)*100</code>。</li>
