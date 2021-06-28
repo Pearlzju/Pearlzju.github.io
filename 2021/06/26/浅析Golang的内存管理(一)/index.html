@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B5%85%E6%9E%90Golang%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/2.png">
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B5%85%E6%9E%90Golang%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/7.png">
 <meta property="article:published_time" content="2021-06-26T07:56:08.234Z">
-<meta property="article:modified_time" content="2021-06-28T10:38:52.160Z">
+<meta property="article:modified_time" content="2021-06-28T10:39:43.277Z">
 <meta property="article:author" content="Pearl">
 <meta property="article:tag" content="Golang">
 <meta name="twitter:card" content="summary">
@@ -482,7 +482,7 @@
 <img width="1000" src="/images/浅析Golang的内存管理/5.png">
 
 <p><code>mcentral</code>结构体的定义在<code>src/runtime/mcentral.go</code>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcentral <span class="keyword">struct</span> &#123;</span><br><span class="line">   lock      mutex</span><br><span class="line">   spanclass spanClass <span class="comment">// span class Id</span></span><br><span class="line">   nonempty  mSpanList <span class="comment">// 空闲的span列表</span></span><br><span class="line">   empty     mSpanList <span class="comment">// 已经被使用的span列表，未归还的会挂载到这里</span></span><br><span class="line">   nmalloc   <span class="keyword">uint64</span> <span class="comment">// 这个mcentral分配mspan的累积计数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcentral <span class="keyword">struct</span> &#123;</span><br><span class="line">  lock      mutex</span><br><span class="line">  spanclass spanClass <span class="comment">// span class Id</span></span><br><span class="line">  nonempty  mSpanList <span class="comment">// 空闲的span列表</span></span><br><span class="line">  empty     mSpanList <span class="comment">// 已经被使用的span列表，未归还的会挂载到这里</span></span><br><span class="line">  nmalloc   <span class="keyword">uint64</span> <span class="comment">// 这个mcentral分配mspan的累积计数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>由于mcentral是公共资源，会有多个mcache向它申请mspan，所以mcentral必须加锁。另外，由于在P上会处理大小不同的对象（因为绑定了不同的goroutine），mcache需要包含各种规格的span，但同一个mcentral只负责管理一种规格(span class)的mspan(mcentral也是用spanclass标记span规格)。</p>
 <h3 id="mheap"><a href="#mheap" class="headerlink" title="mheap"></a>mheap</h3><p>当mcentral的nonempty列表为空的时候，mcentra空间不足，会从mheap获取一系列页用于需要的大小规格的span。</p>
