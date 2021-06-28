@@ -474,7 +474,10 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mcentral <span class="keyword">struct</span> &#123;</span><br><span class="line">  lock      mutex</span><br><span class="line">  spanclass spanClass <span class="comment">// span class Id</span></span><br><span class="line">  nonempty  mSpanList <span class="comment">// 空闲的span列表</span></span><br><span class="line">  empty     mSpanList <span class="comment">// 已经被使用的span列表，未归还的会挂载到这里</span></span><br><span class="line">  nmalloc   <span class="keyword">uint64</span> <span class="comment">// 这个mcentral分配mspan的累积计数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>由于mcentral是公共资源，会有多个mcache向它申请mspan，所以mcentral必须加锁。另外，由于在P上会处理大小不同的对象（因为绑定了不同的goroutine），mcache需要包含各种规格的span，但同一个mcentral只负责管理一种规格(span class)的mspan(mcentral也是用spanclass标记span规格)。</p>
-<h3 id="mheap"><a href="#mheap" class="headerlink" title="mheap"></a>mheap</h3><p>当mcentral的nonempty列表为空的时候，mcentra空间不足，会从mheap获取一系列页用于需要的大小规格的span。</p>
+<blockquote>
+<p>由于有各个规格的span的mcentral，当一个mcache从mcentral申请mspan时，只需在独立的mcentral中使用锁，所以其它任何mcache在同一时间申请不同大小规格的mspan将互不影响。</p>
+</blockquote>
+<h3 id="mheap"><a href="#mheap" class="headerlink" title="mheap"></a>mheap</h3><p>当mcentral的nonempty列表为空的时候，mcentral空间不足，会从mheap获取一系列页用于需要的大小规格的span。</p>
 <p>mheap用于管理堆，只有一个全局变量。持有虚拟地址空间。<br>mheap存储了mcentral的数组，这个数组包含了各个的span的mcentral。</p>
 <img width="1000" src="/images/浅析Golang的内存管理/6.png">
 
@@ -510,7 +513,7 @@
 
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[1]. <a href="https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed" target="_blank" rel="noopener">https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed</a><br>[2]. <a href="https://draveness.me/golang/" target="_blank" rel="noopener">https://draveness.me/golang/</a><br>[3]. <a href="http://goog-perftools.sourceforge.net/doc/tcmalloc.html" target="_blank" rel="noopener">http://goog-perftools.sourceforge.net/doc/tcmalloc.html</a></p>
 <blockquote>
-<p>下一节将Go的垃圾回收。</p>
+<p>讲完Go的内存分配，下一节讲Go的垃圾回收。</p>
 </blockquote>
 
           
