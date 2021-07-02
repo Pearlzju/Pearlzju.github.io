@@ -92,7 +92,7 @@
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B5%85%E6%9E%90Golang%E7%9A%84%E8%B0%83%E5%BA%A6%E5%99%A8/4.png">
 <meta property="og:image" content="https://pearlzju.github.io/images/%E6%B5%85%E6%9E%90Golang%E7%9A%84%E8%B0%83%E5%BA%A6%E5%99%A8/3.png">
 <meta property="article:published_time" content="2021-06-19T10:33:38.021Z">
-<meta property="article:modified_time" content="2021-06-25T09:59:23.463Z">
+<meta property="article:modified_time" content="2021-06-29T02:59:05.300Z">
 <meta property="article:author" content="Pearl">
 <meta property="article:tag" content="Golang">
 <meta name="twitter:card" content="summary">
@@ -404,7 +404,7 @@
 <ul>
 <li>text: 代码区。程序代码编译后的能被CPU执行的机器指令。一旦加载后只读，大小不会再变化。</li>
 <li>initialized data: 程序初始化的变量，全局变量和静态变量。一旦加载后只读，大小不会再变化。</li>
-<li>uninitialized data(bss): 程序没有初始化的变量，会被初始化为0或空指针。</li>
+<li>uninitialized data(bss): 程序没有初始化的全局变量和静态变量，会被初始化为0或空指针。</li>
 <li>stack: 函数调用栈。保存函数的局部变量、向被调用函数传递参数、返回函数的返回值、函数的返回地址。</li>
 <li>heap: 堆。程序运行时动态分配的内存(例如调用malloc)，大小随程序的运行而变化。从堆上分配的内存用完后必须归还给堆，否则内存分配器可能会反复向操作系统申请扩展堆的大小，最后内存不足导致内存泄露。</li>
 </ul>
@@ -705,7 +705,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
