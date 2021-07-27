@@ -1070,7 +1070,7 @@
 <p>Go将大于32KB的对象定义为大对象，直接通过mheap分配。同时只被一个P申请，申请时需要加全局锁。大对象分配必须是page的整数倍。如果mheap内存不足，只能向操作系统申请。</p>
 <h2 id="内存分配规则"><a href="#内存分配规则" class="headerlink" title="内存分配规则"></a>内存分配规则</h2><ul>
 <li>tiny对象(小于16B)内存分配：先向mcache的tiny对象分配器申请；如果不足，向mcache的tinySpanClass规格的span链表申请；如果不足，向mcentral申请对应规格mspan；如果不足，向mheap申请；如果不足，向操作系统申请。</li>
-<li>小对象(16B~32KB)内存分配：通过计算大小规格，先向mcache申请对应大小规格的mspan；如果不足，向mcentral申请对应规格的mspan；如果不足，向mcentral申请对应规格mspan；如果不足，向mheap申请；如果不足，向操作系统申请。</li>
+<li>小对象(16B~32KB)内存分配：通过计算大小规格，先向mcache申请对应大小规格的mspan；如果不足，向mcentral申请对应规格mspan；如果不足，向mheap申请；如果不足，向操作系统申请。</li>
 <li>大对象(大于32KB)内存分配：直接向mheap申请；如果不足，向操作系统申请。</li>
 </ul>
 <blockquote>
