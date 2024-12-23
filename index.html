@@ -2814,7 +2814,7 @@
 <li>内核把内核缓冲区的数据复制到用户空间</li>
 </ol>
 <p>总结一下，一次完整的网络IO输入操作，是应用进程进行系统调用，内核从网卡读取数据写入内存，接着内核把数据从内存中复制到到用户空间的过程。<br>这个过程，有很多种IO模型可以处理，就引发了下文要讲的同步IO（包括阻塞IO、非阻塞IO、IO多路复用）和异步IO模型。</p>
-<h4 id="IO就绪"><a href="#IO就绪" class="headerlink" title="IO就绪"></a>IO就绪</h4><p>我们常说的fd就绪，也就是IO就绪，是IO可读或可写了，即应用程序调用的内核系统调用返回结果了，可以从内核缓冲区读取数据或者写入数据到内核缓冲区。</p>
+<h4 id="IO就绪"><a href="#IO就绪" class="headerlink" title="IO就绪"></a>IO就绪</h4><p>我们常说的fd就绪，也就是IO就绪，是IO可读或可写了，即应用程序调用的内核系统调用返回结果了，可以从内核缓冲区读取数据或者写入数据到用户进程缓冲区。</p>
 <h3 id="同步IO和异步IO"><a href="#同步IO和异步IO" class="headerlink" title="同步IO和异步IO"></a>同步IO和异步IO</h3><p>IO模型从大类上分，分为同步IO和异步IO。</p>
 <h4 id="同步IO-synchronous-IO"><a href="#同步IO-synchronous-IO" class="headerlink" title="同步IO(synchronous IO)"></a>同步IO(synchronous IO)</h4><p>应用程序通过系统调用发送IO请求给内核后，必须等待IO返回后才继续执行后续代码。<br>同步IO有以下几种模型。</p>
 <h5 id="阻塞式IO-blocking-IO"><a href="#阻塞式IO-blocking-IO" class="headerlink" title="阻塞式IO(blocking IO)"></a>阻塞式IO(blocking IO)</h5><img width="400" src="/images/深入理解Linux IO模型/21.png">
@@ -3537,7 +3537,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
